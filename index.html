@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navovia Next - Menu Card Generator</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-container {
+            margin-bottom: 15px;
+        }
+        
+        .logo-preview {
+            max-width: 200px;
+            max-height: 100px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            outline: none;
+            background-color: white;
+            transform: translateY(-2px);
+        }
+        
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 28px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        .menu-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .menu-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .menu-logo {
+            max-width: 150px;
+            max-height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-title {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .menu-subtitle {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .days-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        
+        .day-card {
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .day-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: var(--logo-bg);
+            background-size: 60px;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .day-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .day-header {
+            text-align: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+        
+        .date {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .day {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .meal-section {
+            margin-bottom: 12px;
+        }
+        
+        .meal-title {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .breakfast-title {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+        }
+        
+        .lunch-title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .light-lunch-title {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+        
+        .dinner-title {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+        
+        .meal-items {
+            font-size: 12px;
+            color: #555;
+            min-height: 40px;
+            border: 1px dashed rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: pre-line;
+            line-height: 1.4;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .meal-items:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+        
+        .plan-name {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #4a9c26, #95d257);
+        }
+        
+        .download-all-btn {
+            background: linear-gradient(135deg, #9C27B0, #E91E63);
+        }
+        
+        .download-all-btn:hover {
+            background: linear-gradient(135deg, #8E24AA, #D81B60);
+        }
+        
+        .data-management-btn {
+            background: linear-gradient(135deg, #FF9800, #FF5722);
+        }
+        
+        .data-management-btn:hover {
+            background: linear-gradient(135deg, #F57C00, #E64A19);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #ff5858, #f09819);
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #e04e4e, #d88a17);
+        }
+        
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            color: #2c3e50;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #ff7e5f;
+        }
+        
+        .meal-edit {
+            margin-bottom: 15px;
+        }
+        
+        .meal-edit label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .meal-edit textarea {
+            width: 100%;
+            height: 70px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .format-hint {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .template-controls {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .template-controls h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, #ff5858, #f09819);
+        }
+        
+        .notification.info {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .data-management {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            color: white;
+        }
+        
+        .data-management h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .data-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .backup-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 992px) {
+            .days-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .days-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .data-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .days-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-utensils"></i> Navovia Next - Menu Card Generator</h1>
+            <p class="subtitle">Create and download beautiful 15-day menu cards for your tiffin service</p>
+        </header>
+        
+        <div class="controls">
+            <div>
+                <div class="form-group">
+                    <label for="companyName"><i class="fas fa-building"></i> Company Name</label>
+                    <input type="text" id="companyName" value="Navovia Next">
+                </div>
+                
+                <div class="form-group">
+                    <label for="logoUpload"><i class="fas fa-image"></i> Upload Logo</label>
+                    <input type="file" id="logoUpload" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="planName"><i class="fas fa-tag"></i> Plan Name</label>
+                    <input type="text" id="planName" placeholder="e.g., Premium, Budget">
+                </div>
+            </div>
+            
+            <div>
+                <div class="form-group">
+                    <label for="startDate"><i class="fas fa-calendar-alt"></i> Start Date</label>
+                    <input type="date" id="startDate">
+                </div>
+                
+                <div class="template-controls">
+                    <h3><i class="fas fa-clipboard-list"></i> Default Meal Templates</h3>
+                    <div class="form-group">
+                        <label for="breakfastTemplate">Breakfast Template</label>
+                        <textarea id="breakfastTemplate" placeholder="Enter breakfast template"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lunchTemplate">Lunch Template</label>
+                        <textarea id="lunchTemplate" placeholder="Enter lunch template"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lightLunchTemplate">Light Lunch Template</label>
+                        <textarea id="lightLunchTemplate" placeholder="Enter light lunch template"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="dinnerTemplate">Dinner Template</label>
+                        <textarea id="dinnerTemplate" placeholder="Enter dinner template"></textarea>
+                    </div>
+                    <div class="format-hint">Use line breaks for multi-line items</div>
+                    <button id="applyTemplatesBtn"><i class="fas fa-sync-alt"></i> Apply Templates to All Days</button>
+                </div>
+                
+                <button id="generateBtn"><i class="fas fa-magic"></i> Generate Menu</button>
+            </div>
+        </div>
+        
+        <div class="menu-card" id="menuCard">
+            <div class="menu-header">
+                <img id="menuLogo" class="menu-logo" src="" alt="Logo">
+                <h2 class="menu-title" id="menuCompanyName">Navovia Next</h2>
+                <p class="menu-subtitle">15-Day Tiffin Service Menu</p>
+                <div class="plan-name" id="menuPlanName">Premium Plan</div>
+            </div>
+            
+            <div class="days-container" id="daysContainer">
+                <!-- Days will be generated here -->
+            </div>
+        </div>
+        
+        <!-- Data Management Section -->
+        <div class="data-management">
+            <h3><i class="fas fa-database"></i> Data Management</h3>
+            <div class="data-buttons">
+                <button id="exportDataBtn" class="data-management-btn">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button id="importDataBtn" class="data-management-btn">
+                    <i class="fas fa-file-import"></i> Import Data
+                </button>
+                <button id="createBackupBtn" class="data-management-btn">
+                    <i class="fas fa-save"></i> Create Backup
+                </button>
+                <button id="restoreBackupBtn" class="data-management-btn">
+                    <i class="fas fa-history"></i> Restore Backup
+                </button>
+            </div>
+            <div class="backup-info">
+                <i class="fas fa-info-circle"></i> Your data is automatically saved. Use backups for extra safety.
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button id="downloadBtn" class="download-btn"><i class="fas fa-download"></i> Download 5 Files (3 Days Each)</button>
+            <button id="downloadAllBtn" class="download-all-btn"><i class="fas fa-file-image"></i> Download All in One Image</button>
+            <button id="resetBtn" class="reset-btn"><i class="fas fa-redo"></i> Reset Form</button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="edit-modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"><i class="fas fa-edit"></i> Edit Menu for Date</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="meal-edit">
+                <label for="editBreakfast">Breakfast</label>
+                <textarea id="editBreakfast" placeholder="Enter breakfast items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Tea
+2. Bread
+3. Butter</div>
+            </div>
+            <div class="meal-edit">
+                <label for="editLunch">Lunch</label>
+                <textarea id="editLunch" placeholder="Enter lunch items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Sabzi
+2. Roti
+3. Dal
+4. Chawal</div>
+            </div>
+            <div class="meal-edit">
+                <label for="editLightLunch">Light Lunch</label>
+                <textarea id="editLightLunch" placeholder="Enter light lunch items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Sandwich
+2. Juice
+3. Fruit</div>
+            </div>
+            <div class="meal-edit">
+                <label for="editDinner">Dinner</label>
+                <textarea id="editDinner" placeholder="Enter dinner items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Paneer
+2. Naan
+3. Salad
+4. Raita</div>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelEdit"><i class="fas fa-times"></i> Cancel</button>
+                <button id="saveEdit"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Import Modal -->
+    <div class="edit-modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-file-import"></i> Import Data</h3>
+                <button class="close-modal" id="closeImportModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="importFile">Select backup file (.json)</label>
+                <input type="file" id="importFile" accept=".json">
+            </div>
+            <div class="form-group">
+                <label for="importText">Or paste JSON data:</label>
+                <textarea id="importText" placeholder="Paste your JSON data here" rows="8"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelImport"><i class="fas fa-times"></i> Cancel</button>
+                <button id="confirmImport"><i class="fas fa-check"></i> Import Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Enhanced Storage Management
+        class DataManager {
+            constructor() {
+                this.storageKey = 'navoviaMenuData';
+                this.formStorageKey = 'navoviaFormData';
+                this.backupStorageKey = 'navoviaBackupData';
+                this.backupCount = 5; // Number of backups to keep
+            }
+
+            // Save menu data with timestamp
+            saveMenuData(menuData) {
+                try {
+                    const dataWithMeta = {
+                        data: menuData,
+                        timestamp: new Date().toISOString(),
+                        version: '1.0'
+                    };
+                    localStorage.setItem(this.storageKey, JSON.stringify(dataWithMeta));
+                    return true;
+                } catch (e) {
+                    console.error('Error saving menu data:', e);
+                    return false;
+                }
+            }
+
+            // Load menu data
+            loadMenuData() {
+                try {
+                    const saved = localStorage.getItem(this.storageKey);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        return parsed.data || {};
+                    }
+                } catch (e) {
+                    console.error('Error loading menu data:', e);
+                }
+                return {};
+            }
+
+            // Save form data
+            saveFormData(formData) {
+                try {
+                    const dataWithMeta = {
+                        data: formData,
+                        timestamp: new Date().toISOString()
+                    };
+                    localStorage.setItem(this.formStorageKey, JSON.stringify(dataWithMeta));
+                    return true;
+                } catch (e) {
+                    console.error('Error saving form data:', e);
+                    return false;
+                }
+            }
+
+            // Load form data
+            loadFormData() {
+                try {
+                    const saved = localStorage.getItem(this.formStorageKey);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        return parsed.data || {};
+                    }
+                } catch (e) {
+                    console.error('Error loading form data:', e);
+                }
+                return {};
+            }
+
+            // Create backup
+            createBackup() {
+                try {
+                    const menuData = this.loadMenuData();
+                    const formData = this.loadFormData();
+                    
+                    const backup = {
+                        menuData: menuData,
+                        formData: formData,
+                        timestamp: new Date().toISOString(),
+                        version: '1.0'
+                    };
+
+                    // Get existing backups
+                    let backups = this.getBackups();
+                    
+                    // Add new backup
+                    backups.unshift(backup);
+                    
+                    // Keep only latest backups
+                    backups = backups.slice(0, this.backupCount);
+                    
+                    localStorage.setItem(this.backupStorageKey, JSON.stringify(backups));
+                    return true;
+                } catch (e) {
+                    console.error('Error creating backup:', e);
+                    return false;
+                }
+            }
+
+            // Get all backups
+            getBackups() {
+                try {
+                    const backups = localStorage.getItem(this.backupStorageKey);
+                    return backups ? JSON.parse(backups) : [];
+                } catch (e) {
+                    console.error('Error getting backups:', e);
+                    return [];
+                }
+            }
+
+            // Restore from backup
+            restoreBackup(backupIndex = 0) {
+                try {
+                    const backups = this.getBackups();
+                    if (backups.length > backupIndex) {
+                        const backup = backups[backupIndex];
+                        this.saveMenuData(backup.menuData);
+                        this.saveFormData(backup.formData);
+                        return backup;
+                    }
+                } catch (e) {
+                    console.error('Error restoring backup:', e);
+                }
+                return null;
+            }
+
+            // Export data as JSON file
+            exportData() {
+                try {
+                    const menuData = this.loadMenuData();
+                    const formData = this.loadFormData();
+                    
+                    const exportData = {
+                        menuData: menuData,
+                        formData: formData,
+                        exportDate: new Date().toISOString(),
+                        version: '1.0'
+                    };
+
+                    const dataStr = JSON.stringify(exportData, null, 2);
+                    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                    
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(dataBlob);
+                    link.download = `navovia-menu-backup-${new Date().toISOString().split('T')[0]}.json`;
+                    link.click();
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error exporting data:', e);
+                    return false;
+                }
+            }
+
+            // Import data from JSON
+            importData(jsonData) {
+                try {
+                    const imported = JSON.parse(jsonData);
+                    
+                    if (imported.menuData) {
+                        this.saveMenuData(imported.menuData);
+                    }
+                    
+                    if (imported.formData) {
+                        this.saveFormData(imported.formData);
+                    }
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error importing data:', e);
+                    return false;
+                }
+            }
+
+            // Get storage info
+            getStorageInfo() {
+                const menuData = localStorage.getItem(this.storageKey);
+                const formData = localStorage.getItem(this.formStorageKey);
+                const backups = this.getBackups();
+                
+                return {
+                    menuDataSize: menuData ? menuData.length : 0,
+                    formDataSize: formData ? formData.length : 0,
+                    backupCount: backups.length,
+                    lastBackup: backups.length > 0 ? backups[0].timestamp : null
+                };
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Data Manager
+            const dataManager = new DataManager();
+            
+            // Set default start date to today
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = formattedDate;
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type} show`;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+
+            // Auto-save function
+            function autoSave() {
+                const formData = getFormData();
+                dataManager.saveFormData(formData);
+                dataManager.saveMenuData(menuData);
+                
+                // Create backup every 10 saves (simple throttling)
+                if (Math.random() < 0.1) {
+                    dataManager.createBackup();
+                }
+            }
+
+            // Get current form data
+            function getFormData() {
+                return {
+                    companyName: document.getElementById('companyName').value,
+                    planName: document.getElementById('planName').value,
+                    startDate: document.getElementById('startDate').value,
+                    breakfastTemplate: document.getElementById('breakfastTemplate').value,
+                    lunchTemplate: document.getElementById('lunchTemplate').value,
+                    lightLunchTemplate: document.getElementById('lightLunchTemplate').value,
+                    dinnerTemplate: document.getElementById('dinnerTemplate').value,
+                    logoDataURL: logoDataURL
+                };
+            }
+
+            // Load saved data from localStorage
+            function loadSavedData() {
+                const savedMenuData = dataManager.loadMenuData();
+                const savedFormData = dataManager.loadFormData();
+                
+                if (Object.keys(savedMenuData).length > 0) {
+                    menuData = savedMenuData;
+                }
+                
+                if (Object.keys(savedFormData).length > 0) {
+                    document.getElementById('companyName').value = savedFormData.companyName || 'Navovia Next';
+                    document.getElementById('planName').value = savedFormData.planName || '';
+                    document.getElementById('startDate').value = savedFormData.startDate || formattedDate;
+                    document.getElementById('breakfastTemplate').value = savedFormData.breakfastTemplate || '';
+                    document.getElementById('lunchTemplate').value = savedFormData.lunchTemplate || '';
+                    document.getElementById('lightLunchTemplate').value = savedFormData.lightLunchTemplate || '';
+                    document.getElementById('dinnerTemplate').value = savedFormData.dinnerTemplate || '';
+                    
+                    if (savedFormData.logoDataURL) {
+                        logoDataURL = savedFormData.logoDataURL;
+                        document.getElementById('menuLogo').src = logoDataURL;
+                    }
+                }
+                
+                const storageInfo = dataManager.getStorageInfo();
+                showNotification(`Data loaded successfully! ${storageInfo.backupCount} backups available.`, 'success');
+            }
+            
+            // Logo upload functionality
+            const logoUpload = document.getElementById('logoUpload');
+            const menuLogo = document.getElementById('menuLogo');
+            let logoDataURL = '';
+            
+            logoUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        logoDataURL = event.target.result;
+                        menuLogo.src = logoDataURL;
+                        
+                        // Update logo background for all day cards if they exist
+                        const dayCards = document.querySelectorAll('.day-card');
+                        dayCards.forEach(card => {
+                            card.style.setProperty('--logo-bg', `url(${logoDataURL})`);
+                        });
+                        
+                        // Auto-save
+                        autoSave();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Generate menu functionality
+            const generateBtn = document.getElementById('generateBtn');
+            const daysContainer = document.getElementById('daysContainer');
+            const applyTemplatesBtn = document.getElementById('applyTemplatesBtn');
+            
+            generateBtn.addEventListener('click', function() {
+                generateMenu();
+                showNotification('Menu generated successfully!', 'success');
+            });
+            
+            // Apply templates to all days
+            applyTemplatesBtn.addEventListener('click', function() {
+                applyTemplatesToAllDays();
+                showNotification('Templates applied to all days!', 'success');
+            });
+            
+            // Store menu data for each day
+            let menuData = {};
+            
+            function generateMenu() {
+                // Clear previous days
+                daysContainer.innerHTML = '';
+                
+                // Get form values
+                const companyName = document.getElementById('companyName').value || 'Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                // Auto-save form data
+                autoSave();
+                
+                // Update menu header
+                document.getElementById('menuCompanyName').textContent = companyName;
+                document.getElementById('menuPlanName').textContent = planName;
+                
+                // Generate 15 days
+                for (let i = 0; i < 15; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    
+                    const dateKey = formatDate(currentDate);
+                    
+                    // Initialize menu data for this date if not exists
+                    if (!menuData[dateKey]) {
+                        menuData[dateKey] = {
+                            breakfast: document.getElementById('breakfastTemplate').value || 'Tea\nBread\nButter',
+                            lunch: document.getElementById('lunchTemplate').value || 'Sabzi\nRoti\nDal\nChawal',
+                            lightLunch: document.getElementById('lightLunchTemplate').value || 'Sandwich\nJuice\nFruit',
+                            dinner: document.getElementById('dinnerTemplate').value || 'Sabzi\nRoti\nDal\nChawal'
+                        };
+                    }
+                    
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'day-card';
+                    dayCard.setAttribute('data-date', dateKey);
+                    
+                    // Set logo as background if available
+                    if (logoDataURL) {
+                        dayCard.style.setProperty('--logo-bg', `url(${logoDataURL})`);
+                    }
+                    
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'day-header';
+                    
+                    const dateElement = document.createElement('div');
+                    dateElement.className = 'date';
+                    dateElement.textContent = dateKey;
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'day';
+                    dayElement.textContent = getDayName(currentDate);
+                    
+                    dayHeader.appendChild(dateElement);
+                    dayHeader.appendChild(dayElement);
+                    
+                    // Add meal sections with click-to-edit functionality
+                    const breakfastSection = createMealSection('Breakfast', menuData[dateKey].breakfast, dateKey, 'breakfast', 'breakfast-title');
+                    const lunchSection = createMealSection('Lunch', menuData[dateKey].lunch, dateKey, 'lunch', 'lunch-title');
+                    const lightLunchSection = createMealSection('Light Lunch', menuData[dateKey].lightLunch, dateKey, 'lightLunch', 'light-lunch-title');
+                    const dinnerSection = createMealSection('Dinner', menuData[dateKey].dinner, dateKey, 'dinner', 'dinner-title');
+                    
+                    dayCard.appendChild(dayHeader);
+                    dayCard.appendChild(breakfastSection);
+                    dayCard.appendChild(lunchSection);
+                    dayCard.appendChild(lightLunchSection);
+                    dayCard.appendChild(dinnerSection);
+                    
+                    daysContainer.appendChild(dayCard);
+                }
+                
+                // Auto-save menu data
+                autoSave();
+            }
+            
+            function applyTemplatesToAllDays() {
+                const breakfastTemplate = document.getElementById('breakfastTemplate').value;
+                const lunchTemplate = document.getElementById('lunchTemplate').value;
+                const lightLunchTemplate = document.getElementById('lightLunchTemplate').value;
+                const dinnerTemplate = document.getElementById('dinnerTemplate').value;
+                
+                // Get start date
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                // Update all days with new templates
+                for (let i = 0; i < 15; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    const dateKey = formatDate(currentDate);
+                    
+                    // Update menu data
+                    if (breakfastTemplate) menuData[dateKey].breakfast = breakfastTemplate;
+                    if (lunchTemplate) menuData[dateKey].lunch = lunchTemplate;
+                    if (lightLunchTemplate) menuData[dateKey].lightLunch = lightLunchTemplate;
+                    if (dinnerTemplate) menuData[dateKey].dinner = dinnerTemplate;
+                    
+                    // Update UI if day card exists
+                    const dayCard = document.querySelector(`.day-card[data-date="${dateKey}"]`);
+                    if (dayCard) {
+                        if (breakfastTemplate) dayCard.querySelector('[data-meal="breakfast"]').textContent = breakfastTemplate;
+                        if (lunchTemplate) dayCard.querySelector('[data-meal="lunch"]').textContent = lunchTemplate;
+                        if (lightLunchTemplate) dayCard.querySelector('[data-meal="lightLunch"]').textContent = lightLunchTemplate;
+                        if (dinnerTemplate) dayCard.querySelector('[data-meal="dinner"]').textContent = dinnerTemplate;
+                    }
+                }
+                
+                // Auto-save
+                autoSave();
+            }
+            
+            function createMealSection(title, items, dateKey, mealType, titleClass) {
+                const section = document.createElement('div');
+                section.className = 'meal-section';
+                
+                const titleElement = document.createElement('div');
+                titleElement.className = `meal-title ${titleClass}`;
+                titleElement.textContent = title;
+                
+                const itemsElement = document.createElement('div');
+                itemsElement.className = 'meal-items';
+                itemsElement.textContent = items;
+                itemsElement.setAttribute('data-date', dateKey);
+                itemsElement.setAttribute('data-meal', mealType);
+                
+                // Add click event to edit meal
+                itemsElement.addEventListener('click', function() {
+                    openEditModal(dateKey, mealType, items);
+                });
+                
+                section.appendChild(titleElement);
+                section.appendChild(itemsElement);
+                
+                return section;
+            }
+            
+            function formatDate(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
+            }
+            
+            function getDayName(date) {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return days[date.getDay()];
+            }
+            
+            // Modal functionality
+            const editModal = document.getElementById('editModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelEdit = document.getElementById('cancelEdit');
+            const saveEdit = document.getElementById('saveEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const editBreakfast = document.getElementById('editBreakfast');
+            const editLunch = document.getElementById('editLunch');
+            const editLightLunch = document.getElementById('editLightLunch');
+            const editDinner = document.getElementById('editDinner');
+            
+            let currentEditDate = '';
+            let currentEditMeal = '';
+            
+            function openEditModal(dateKey, mealType, currentValue) {
+                currentEditDate = dateKey;
+                currentEditMeal = mealType;
+                
+                modalTitle.textContent = `Edit Menu for ${dateKey}`;
+                
+                // Set current values in modal
+                editBreakfast.value = menuData[dateKey].breakfast;
+                editLunch.value = menuData[dateKey].lunch;
+                editLightLunch.value = menuData[dateKey].lightLunch;
+                editDinner.value = menuData[dateKey].dinner;
+                
+                editModal.style.display = 'flex';
+            }
+            
+            function closeEditModal() {
+                editModal.style.display = 'none';
+                currentEditDate = '';
+                currentEditMeal = '';
+            }
+            
+            closeModal.addEventListener('click', closeEditModal);
+            cancelEdit.addEventListener('click', closeEditModal);
+            
+            saveEdit.addEventListener('click', function() {
+                if (currentEditDate) {
+                    // Update menu data
+                    menuData[currentEditDate].breakfast = editBreakfast.value;
+                    menuData[currentEditDate].lunch = editLunch.value;
+                    menuData[currentEditDate].lightLunch = editLightLunch.value;
+                    menuData[currentEditDate].dinner = editDinner.value;
+                    
+                    // Update display - only the specific date card
+                    const dayCard = document.querySelector(`.day-card[data-date="${currentEditDate}"]`);
+                    if (dayCard) {
+                        dayCard.querySelector('[data-meal="breakfast"]').textContent = editBreakfast.value;
+                        dayCard.querySelector('[data-meal="lunch"]').textContent = editLunch.value;
+                        dayCard.querySelector('[data-meal="lightLunch"]').textContent = editLightLunch.value;
+                        dayCard.querySelector('[data-meal="dinner"]').textContent = editDinner.value;
+                    }
+                    
+                    // Auto-save
+                    autoSave();
+                    
+                    showNotification('Menu updated successfully!', 'success');
+                    closeEditModal();
+                }
+            });
+            
+            // Close modal when clicking outside
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+            
+            // Download functionality - 5 files with 3 days each
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            downloadBtn.addEventListener('click', async function() {
+                showNotification('Preparing 5 menu files for download...', 'info');
+                
+                // Get form values
+                const companyName = document.getElementById('companyName').value || 'Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                try {
+                    // Create and download 5 files with 3 days each
+                    for (let fileIndex = 0; fileIndex < 5; fileIndex++) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        // Create a temporary menu card for this file
+                        const tempMenuCard = document.createElement('div');
+                        tempMenuCard.className = 'menu-card';
+                        tempMenuCard.style.position = 'absolute';
+                        tempMenuCard.style.left = '-9999px';
+                        tempMenuCard.style.top = '0';
+                        tempMenuCard.style.width = '100%';
+                        
+                        // Add header
+                        const menuHeader = document.createElement('div');
+                        menuHeader.className = 'menu-header';
+                        
+                        const menuLogo = document.createElement('img');
+                        menuLogo.className = 'menu-logo';
+                        menuLogo.src = logoDataURL;
+                        menuLogo.style.display = logoDataURL ? 'block' : 'none';
+                        
+                        const menuTitle = document.createElement('h2');
+                        menuTitle.className = 'menu-title';
+                        menuTitle.textContent = companyName;
+                        
+                        const menuSubtitle = document.createElement('p');
+                        menuSubtitle.className = 'menu-subtitle';
+                        menuSubtitle.textContent = `15-Day Tiffin Service Menu - Part ${fileIndex + 1}`;
+                        
+                        const planNameElement = document.createElement('div');
+                        planNameElement.className = 'plan-name';
+                        planNameElement.textContent = planName;
+                        
+                        menuHeader.appendChild(menuLogo);
+                        menuHeader.appendChild(menuTitle);
+                        menuHeader.appendChild(menuSubtitle);
+                        menuHeader.appendChild(planNameElement);
+                        
+                        tempMenuCard.appendChild(menuHeader);
+                        
+                        // Add days container
+                        const tempDaysContainer = document.createElement('div');
+                        tempDaysContainer.className = 'days-container';
+                        
+                        // Add 3 days for this file
+                        for (let dayIndex = 0; dayIndex < 3; dayIndex++) {
+                            const dayNumber = fileIndex * 3 + dayIndex;
+                            if (dayNumber >= 15) break;
+                            
+                            const currentDate = new Date(startDate);
+                            currentDate.setDate(startDate.getDate() + dayNumber);
+                            
+                            const dateKey = formatDate(currentDate);
+                            
+                            const dayCard = document.createElement('div');
+                            dayCard.className = 'day-card';
+                            
+                            // Set logo as background if available
+                            if (logoDataURL) {
+                                dayCard.style.setProperty('--logo-bg', `url(${logoDataURL})`);
+                            }
+                            
+                            const dayHeader = document.createElement('div');
+                            dayHeader.className = 'day-header';
+                            
+                            const dateElement = document.createElement('div');
+                            dateElement.className = 'date';
+                            dateElement.textContent = dateKey;
+                            
+                            const dayElement = document.createElement('div');
+                            dayElement.className = 'day';
+                            dayElement.textContent = getDayName(currentDate);
+                            
+                            dayHeader.appendChild(dateElement);
+                            dayHeader.appendChild(dayElement);
+                            
+                            // Add meal sections
+                            const breakfastSection = createMealSectionForDownload('Breakfast', menuData[dateKey].breakfast, 'breakfast-title');
+                            const lunchSection = createMealSectionForDownload('Lunch', menuData[dateKey].lunch, 'lunch-title');
+                            const lightLunchSection = createMealSectionForDownload('Light Lunch', menuData[dateKey].lightLunch, 'light-lunch-title');
+                            const dinnerSection = createMealSectionForDownload('Dinner', menuData[dateKey].dinner, 'dinner-title');
+                            
+                            dayCard.appendChild(dayHeader);
+                            dayCard.appendChild(breakfastSection);
+                            dayCard.appendChild(lunchSection);
+                            dayCard.appendChild(lightLunchSection);
+                            dayCard.appendChild(dinnerSection);
+                            
+                            tempDaysContainer.appendChild(dayCard);
+                        }
+                        
+                        tempMenuCard.appendChild(tempDaysContainer);
+                        document.body.appendChild(tempMenuCard);
+                        
+                        // Generate and download image
+                        await new Promise(resolve => {
+                            html2canvas(tempMenuCard, {
+                                scale: 2,
+                                useCORS: true,
+                                logging: false
+                            }).then(function(canvas) {
+                                const link = document.createElement('a');
+                                link.download = `navovia-next-menu-part-${fileIndex + 1}.png`;
+                                link.href = canvas.toDataURL('image/png');
+                                link.click();
+                                
+                                // Remove temporary element
+                                document.body.removeChild(tempMenuCard);
+                                resolve();
+                            });
+                        });
+                    }
+                    
+                    showNotification('All 5 menu files downloaded successfully!', 'success');
+                } catch (error) {
+                    console.error('Error generating images:', error);
+                    showNotification('Error generating images. Please try again.', 'error');
+                }
+            });
+            
+            // Download All in One functionality
+            const downloadAllBtn = document.getElementById('downloadAllBtn');
+            
+            downloadAllBtn.addEventListener('click', function() {
+                showNotification('Preparing complete menu for download...', 'info');
+                
+                // Use the existing menu card for download
+                const menuCard = document.getElementById('menuCard');
+                
+                // Temporarily update subtitle for the complete download
+                const originalSubtitle = document.querySelector('.menu-subtitle').textContent;
+                document.querySelector('.menu-subtitle').textContent = '15-Day Tiffin Service Menu - Complete';
+                
+                html2canvas(menuCard, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                }).then(function(canvas) {
+                    const link = document.createElement('a');
+                    link.download = 'navovia-next-complete-menu.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    // Restore original subtitle
+                    document.querySelector('.menu-subtitle').textContent = originalSubtitle;
+                    
+                    showNotification('Complete menu downloaded successfully!', 'success');
+                }).catch(error => {
+                    console.error('Error generating complete menu image:', error);
+                    showNotification('Error generating complete menu. Please try again.', 'error');
+                    
+                    // Restore original subtitle in case of error
+                    document.querySelector('.menu-subtitle').textContent = originalSubtitle;
+                });
+            });
+            
+            function createMealSectionForDownload(title, items, titleClass) {
+                const section = document.createElement('div');
+                section.className = 'meal-section';
+                
+                const titleElement = document.createElement('div');
+                titleElement.className = `meal-title ${titleClass}`;
+                titleElement.textContent = title;
+                
+                const itemsElement = document.createElement('div');
+                itemsElement.className = 'meal-items';
+                itemsElement.textContent = items;
+                
+                section.appendChild(titleElement);
+                section.appendChild(itemsElement);
+                
+                return section;
+            }
+            
+            // Data Management Functions
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const importDataBtn = document.getElementById('importDataBtn');
+            const createBackupBtn = document.getElementById('createBackupBtn');
+            const restoreBackupBtn = document.getElementById('restoreBackupBtn');
+            const importModal = document.getElementById('importModal');
+            const closeImportModal = document.getElementById('closeImportModal');
+            const cancelImport = document.getElementById('cancelImport');
+            const confirmImport = document.getElementById('confirmImport');
+            const importFile = document.getElementById('importFile');
+            const importText = document.getElementById('importText');
+            
+            // Export Data
+            exportDataBtn.addEventListener('click', function() {
+                if (dataManager.exportData()) {
+                    showNotification('Data exported successfully!', 'success');
+                } else {
+                    showNotification('Error exporting data', 'error');
+                }
+            });
+            
+            // Create Backup
+            createBackupBtn.addEventListener('click', function() {
+                if (dataManager.createBackup()) {
+                    const backups = dataManager.getBackups();
+                    showNotification(`Backup created successfully! Total backups: ${backups.length}`, 'success');
+                } else {
+                    showNotification('Error creating backup', 'error');
+                }
+            });
+            
+            // Restore Backup
+            restoreBackupBtn.addEventListener('click', function() {
+                const backups = dataManager.getBackups();
+                if (backups.length === 0) {
+                    showNotification('No backups available', 'error');
+                    return;
+                }
+                
+                if (confirm('Restore latest backup? This will replace current data.')) {
+                    const restored = dataManager.restoreBackup(0);
+                    if (restored) {
+                        loadSavedData();
+                        generateMenu();
+                        showNotification(`Backup from ${new Date(restored.timestamp).toLocaleString()} restored!`, 'success');
+                    } else {
+                        showNotification('Error restoring backup', 'error');
+                    }
+                }
+            });
+            
+            // Import Data
+            importDataBtn.addEventListener('click', function() {
+                importModal.style.display = 'flex';
+            });
+            
+            closeImportModal.addEventListener('click', function() {
+                importModal.style.display = 'none';
+            });
+            
+            cancelImport.addEventListener('click', function() {
+                importModal.style.display = 'none';
+            });
+            
+            // File import
+            importFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        importText.value = event.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            
+            confirmImport.addEventListener('click', function() {
+                const importData = importText.value.trim();
+                if (!importData) {
+                    showNotification('Please provide data to import', 'error');
+                    return;
+                }
+                
+                if (confirm('Import data? This will replace current data.')) {
+                    if (dataManager.importData(importData)) {
+                        loadSavedData();
+                        generateMenu();
+                        importModal.style.display = 'none';
+                        showNotification('Data imported successfully!', 'success');
+                    } else {
+                        showNotification('Error importing data. Invalid format.', 'error');
+                    }
+                }
+            });
+            
+            // Reset functionality
+            const resetBtn = document.getElementById('resetBtn');
+            
+            resetBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
+                    document.getElementById('companyName').value = 'Navovia Next';
+                    document.getElementById('logoUpload').value = '';
+                    document.getElementById('planName').value = '';
+                    document.getElementById('startDate').value = formattedDate;
+                    document.getElementById('breakfastTemplate').value = '';
+                    document.getElementById('lunchTemplate').value = '';
+                    document.getElementById('lightLunchTemplate').value = '';
+                    document.getElementById('dinnerTemplate').value = '';
+                    
+                    menuLogo.src = '';
+                    daysContainer.innerHTML = '';
+                    menuData = {};
+                    logoDataURL = '';
+                    
+                    // Clear localStorage on reset
+                    localStorage.removeItem('navoviaMenuData');
+                    localStorage.removeItem('navoviaFormData');
+                    
+                    document.getElementById('menuCompanyName').textContent = 'Navovia Next';
+                    document.getElementById('menuPlanName').textContent = 'Premium Plan';
+                    
+                    showNotification('All data has been reset!', 'info');
+                }
+            });
+            
+            // Auto-save form data when inputs change
+            const formInputs = document.querySelectorAll('input, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', autoSave);
+                input.addEventListener('change', autoSave);
+            });
+            
+            // Load saved data and generate initial menu
+            loadSavedData();
+            generateMenu();
+            
+            // Show storage info on load
+            const storageInfo = dataManager.getStorageInfo();
+            if (storageInfo.menuDataSize > 0) {
+                console.log('Data loaded from storage:', storageInfo);
+            }
+        });
+    </script>
+</body>
+</html>
