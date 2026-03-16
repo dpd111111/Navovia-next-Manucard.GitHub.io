@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Tiffin Service by Navovia Next - Menu Card Generator</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-container {
+            margin-bottom: 20px;
+        }
+        
+        .logo-preview {
+            max-width: 220px;
+            max-height: 120px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            margin-bottom: 35px;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #555;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.25);
+            outline: none;
+            background-color: white;
+            transform: translateY(-3px);
+        }
+        
+        textarea {
+            height: 90px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        .menu-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 35px;
+            margin-top: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .menu-header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .menu-logo {
+            max-width: 180px;
+            max-height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .menu-title {
+            color: #2c3e50;
+            font-size: 36px;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-subtitle {
+            color: #7f8c8d;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .days-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px;
+        }
+        
+        .day-card {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 18px;
+            padding: 22px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .day-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .day-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: var(--logo-bg);
+            background-size: 70px;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.08;
+            z-index: 0;
+        }
+        
+        .day-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .day-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed rgba(0, 0, 0, 0.1);
+        }
+        
+        .date {
+            font-weight: 800;
+            color: #2c3e50;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+        }
+        
+        .day {
+            color: #7f8c8d;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .meal-section {
+            margin-bottom: 15px;
+        }
+        
+        .meal-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .breakfast-title {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            box-shadow: 0 3px 8px rgba(255, 126, 95, 0.3);
+        }
+        
+        .lunch-title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .light-lunch-title {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            box-shadow: 0 3px 8px rgba(240, 147, 251, 0.3);
+        }
+        
+        .dinner-title {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            box-shadow: 0 3px 8px rgba(79, 172, 254, 0.3);
+        }
+        
+        .meal-items {
+            font-size: 13px;
+            color: #555;
+            min-height: 45px;
+            border: 2px dashed rgba(0, 0, 0, 0.15);
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: pre-line;
+            line-height: 1.5;
+            background-color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+        
+        .meal-items:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-color: #667eea;
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plan-name {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            display: inline-block;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #4a9c26, #95d257);
+        }
+        
+        .download-all-btn {
+            background: linear-gradient(135deg, #9C27B0, #E91E63);
+        }
+        
+        .download-all-btn:hover {
+            background: linear-gradient(135deg, #8E24AA, #D81B60);
+        }
+        
+        .meal-download-btn {
+            background: linear-gradient(135deg, #FF5722, #FF9800);
+        }
+        
+        .meal-download-btn:hover {
+            background: linear-gradient(135deg, #E64A19, #F57C00);
+        }
+        
+        .data-management-btn {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+        }
+        
+        .data-management-btn:hover {
+            background: linear-gradient(135deg, #1976D2, #00BCD4);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #ff5858, #f09819);
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #e04e4e, #d88a17);
+        }
+        
+        .excel-btn {
+            background: linear-gradient(135deg, #217346, #4CAF50);
+        }
+        
+        .excel-btn:hover {
+            background: linear-gradient(135deg, #1e6a3f, #45a049);
+        }
+        
+        .download-type-btn {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+        }
+        
+        .download-type-btn:hover {
+            background: linear-gradient(135deg, #8E24AA, #5E35B1);
+        }
+        
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(15px);
+            padding: 35px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            color: #2c3e50;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s;
+            font-weight: bold;
+        }
+        
+        .close-modal:hover {
+            color: #ff7e5f;
+            transform: scale(1.1);
+        }
+        
+        .meal-edit {
+            margin-bottom: 18px;
+        }
+        
+        .meal-edit label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .meal-edit textarea {
+            width: 100%;
+            height: 80px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            resize: vertical;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.5;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        
+        .format-hint {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .template-controls {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 25px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .template-controls h3 {
+            margin-bottom: 18px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            padding: 18px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, #ff5858, #f09819);
+        }
+        
+        .notification.info {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .data-management {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            padding: 25px;
+            border-radius: 18px;
+            margin-top: 25px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .data-management h3 {
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+        }
+        
+        .data-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .backup-info {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        
+        .download-options {
+            background: linear-gradient(135deg, #FF9800, #FF5722);
+            padding: 25px;
+            border-radius: 18px;
+            margin-top: 25px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .download-options h3 {
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+        }
+        
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .download-category {
+            margin-bottom: 20px;
+        }
+        
+        .download-category h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .download-category-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        @media (max-width: 1200px) {
+            .days-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .download-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .days-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2.3rem;
+            }
+            
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .days-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .data-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .days-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-card {
+                padding: 25px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-utensils"></i> Classic Tiffin Service by Navovia Next</h1>
+            <p class="subtitle">Create and download beautiful HD 15-day menu cards for your tiffin service</p>
+        </header>
+        
+        <div class="controls">
+            <div>
+                <div class="form-group">
+                    <label for="companyName"><i class="fas fa-building"></i> Company Name</label>
+                    <input type="text" id="companyName" value="Classic Tiffin Service by Navovia Next">
+                </div>
+                
+                <div class="form-group">
+                    <label for="logoUpload"><i class="fas fa-image"></i> Upload Logo (HD Recommended)</label>
+                    <input type="file" id="logoUpload" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="planName"><i class="fas fa-tag"></i> Plan Name</label>
+                    <input type="text" id="planName" value="Premium Plan">
+                </div>
+            </div>
+            
+            <div>
+                <div class="form-group">
+                    <label for="startDate"><i class="fas fa-calendar-alt"></i> Start Date</label>
+                    <input type="date" id="startDate" value="2025-02-02">
+                </div>
+                
+                <div class="template-controls">
+                    <h3><i class="fas fa-clipboard-list"></i> Default Meal Templates</h3>
+                    <div class="form-group">
+                        <label for="breakfastTemplate">Breakfast Template</label>
+                        <textarea id="breakfastTemplate" placeholder="Enter breakfast template">Choose your beverages-
+Tea
+Coffee
+Milk</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lunchTemplate">Lunch Template</label>
+                        <textarea id="lunchTemplate" placeholder="Enter lunch template">Roti
+Rice
+Sabzi
+Dal
+Salad
+Sweet</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lightLunchTemplate">Light Lunch Template</label>
+                        <textarea id="lightLunchTemplate" placeholder="Enter light lunch template">Roti
+Sabzi
+Salad
+Sweet</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="dinnerTemplate">Dinner Template</label>
+                        <textarea id="dinnerTemplate" placeholder="Enter dinner template">Roti
+Rice
+Sabzi
+Dal
+Salad
+Sweet</textarea>
+                    </div>
+                    <div class="format-hint">Use line breaks for multi-line items (HD formatting)</div>
+                    <button id="applyTemplatesBtn"><i class="fas fa-sync-alt"></i> Apply Templates to All Days</button>
+                </div>
+                
+                <button id="generateBtn"><i class="fas fa-magic"></i> Generate Menu</button>
+            </div>
+        </div>
+        
+        <div class="menu-card" id="menuCard">
+            <div class="menu-header">
+                <img id="menuLogo" class="menu-logo" src="" alt="Logo">
+                <h2 class="menu-title" id="menuCompanyName">Classic Tiffin Service by Navovia Next</h2>
+                <p class="menu-subtitle">15-Day Premium Tiffin Service Menu</p>
+                <div class="plan-name" id="menuPlanName">Premium Plan</div>
+            </div>
+            
+            <div class="days-container" id="daysContainer">
+                <!-- Days will be generated here -->
+            </div>
+        </div>
+        
+        <!-- Download Options Section -->
+        <div class="download-options">
+            <h3><i class="fas fa-download"></i> Download Options</h3>
+            
+            <div class="download-grid">
+                <!-- Category 1: 3 Days Sets -->
+                <div class="download-category">
+                    <h4><i class="fas fa-calendar-week"></i> 3 Days Sets (5 Files)</h4>
+                    <div class="download-category-buttons">
+                        <button id="download3DaysSetsBtn" class="download-type-btn">
+                            <i class="fas fa-layer-group"></i> Download 5 Files (3 Days Each)
+                        </button>
+                        <button id="download3DaysBreakfastBtn" class="meal-download-btn">
+                            <i class="fas fa-sun"></i> 3 Days Breakfast Sets
+                        </button>
+                        <button id="download3DaysLunchBtn" class="meal-download-btn">
+                            <i class="fas fa-utensils"></i> 3 Days Lunch Sets
+                        </button>
+                        <button id="download3DaysDinnerBtn" class="meal-download-btn">
+                            <i class="fas fa-moon"></i> 3 Days Dinner Sets
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Category 2: 15 Days Meal-wise -->
+                <div class="download-category">
+                    <h4><i class="fas fa-calendar-alt"></i> 15 Days Complete Meals</h4>
+                    <div class="download-category-buttons">
+                        <button id="download15DaysBreakfastBtn" class="meal-download-btn">
+                            <i class="fas fa-sun"></i> All 15 Days Breakfast
+                        </button>
+                        <button id="download15DaysLunchBtn" class="meal-download-btn">
+                            <i class="fas fa-utensils"></i> All 15 Days Lunch
+                        </button>
+                        <button id="download15DaysDinnerBtn" class="meal-download-btn">
+                            <i class="fas fa-moon"></i> All 15 Days Dinner
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Category 3: Individual Meals -->
+                <div class="download-category">
+                    <h4><i class="fas fa-file-image"></i> Individual Meal Files</h4>
+                    <div class="download-category-buttons">
+                        <button id="downloadIndividualBreakfastBtn" class="meal-download-btn">
+                            <i class="fas fa-sun"></i> Individual Breakfast (15 Files)
+                        </button>
+                        <button id="downloadIndividualLunchBtn" class="meal-download-btn">
+                            <i class="fas fa-utensils"></i> Individual Lunch (15 Files)
+                        </button>
+                        <button id="downloadIndividualDinnerBtn" class="meal-download-btn">
+                            <i class="fas fa-moon"></i> Individual Dinner (15 Files)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Management Section -->
+        <div class="data-management">
+            <h3><i class="fas fa-database"></i> Data Management</h3>
+            <div class="data-buttons">
+                <button id="exportDataBtn" class="data-management-btn">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button id="importDataBtn" class="data-management-btn">
+                    <i class="fas fa-file-import"></i> Import Data
+                </button>
+                <button id="createBackupBtn" class="data-management-btn">
+                    <i class="fas fa-save"></i> Create Backup
+                </button>
+                <button id="restoreBackupBtn" class="data-management-btn">
+                    <i class="fas fa-history"></i> Restore Backup
+                </button>
+            </div>
+            <div class="backup-info">
+                <i class="fas fa-info-circle"></i> Your data is automatically saved. HD templates are preserved.
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button id="downloadCompleteMenuBtn" class="download-all-btn">
+                <i class="fas fa-images"></i> Download Complete 15 Days Menu
+            </button>
+            <button id="excelBtn" class="excel-btn">
+                <i class="fas fa-file-excel"></i> Download Excel File
+            </button>
+            <button id="resetBtn" class="reset-btn">
+                <i class="fas fa-redo"></i> Reset Form
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="edit-modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"><i class="fas fa-edit"></i> Edit Menu for Date</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="meal-edit">
+                <label for="editBreakfast">Breakfast</label>
+                <textarea id="editBreakfast" placeholder="Enter breakfast items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Tea
+2. Bread
+3. Butter</div>
+            </div>
+            <div class="meal-edit">
+                <label for="editLunch">Lunch</label>
+                <textarea id="editLunch" placeholder="Enter lunch items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Sabzi
+2. Roti
+3. Dal
+4. Chawal</div>
+            </div>
+            <div class="meal-edit">
+                <label for="editLightLunch">Light Lunch</label>
+                <textarea id="editLightLunch" placeholder="Enter light lunch items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Sandwich
+2. Juice
+3. Fruit</div>
+            </div>
+            <div class="meal-edit">
+                <label for="editDinner">Dinner</label>
+                <textarea id="editDinner" placeholder="Enter dinner items, one per line"></textarea>
+                <div class="format-hint">Example: 
+1. Paneer
+2. Naan
+3. Salad
+4. Raita</div>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelEdit"><i class="fas fa-times"></i> Cancel</button>
+                <button id="saveEdit"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Import Modal -->
+    <div class="edit-modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-file-import"></i> Import Data</h3>
+                <button class="close-modal" id="closeImportModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="importFile">Select backup file (.json)</label>
+                <input type="file" id="importFile" accept=".json">
+            </div>
+            <div class="form-group">
+                <label for="importText">Or paste JSON data:</label>
+                <textarea id="importText" placeholder="Paste your JSON data here" rows="8"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelImport"><i class="fas fa-times"></i> Cancel</button>
+                <button id="confirmImport"><i class="fas fa-check"></i> Import Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Data Manager
+            class DataManager {
+                constructor() {
+                    this.storageKey = 'classicTiffinMenuData';
+                    this.formStorageKey = 'classicTiffinFormData';
+                }
+
+                saveMenuData(menuData) {
+                    try {
+                        const dataWithMeta = {
+                            data: menuData,
+                            timestamp: new Date().toISOString()
+                        };
+                        localStorage.setItem(this.storageKey, JSON.stringify(dataWithMeta));
+                        return true;
+                    } catch (e) {
+                        console.error('Error saving menu data:', e);
+                        return false;
+                    }
+                }
+
+                loadMenuData() {
+                    try {
+                        const saved = localStorage.getItem(this.storageKey);
+                        if (saved) {
+                            const parsed = JSON.parse(saved);
+                            return parsed.data || {};
+                        }
+                    } catch (e) {
+                        console.error('Error loading menu data:', e);
+                    }
+                    return {};
+                }
+
+                saveFormData(formData) {
+                    try {
+                        const dataWithMeta = {
+                            data: formData,
+                            timestamp: new Date().toISOString()
+                        };
+                        localStorage.setItem(this.formStorageKey, JSON.stringify(dataWithMeta));
+                        return true;
+                    } catch (e) {
+                        console.error('Error saving form data:', e);
+                        return false;
+                    }
+                }
+
+                loadFormData() {
+                    try {
+                        const saved = localStorage.getItem(this.formStorageKey);
+                        if (saved) {
+                            const parsed = JSON.parse(saved);
+                            return parsed.data || {};
+                        }
+                    } catch (e) {
+                        console.error('Error loading form data:', e);
+                    }
+                    return {};
+                }
+            }
+
+            const dataManager = new DataManager();
+            
+            // Set default start date
+            document.getElementById('startDate').value = '2025-02-02';
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type} show`;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+
+            // Auto-save function
+            function autoSave() {
+                const formData = getFormData();
+                dataManager.saveFormData(formData);
+                dataManager.saveMenuData(menuData);
+            }
+
+            // Get current form data
+            function getFormData() {
+                return {
+                    companyName: document.getElementById('companyName').value,
+                    planName: document.getElementById('planName').value,
+                    startDate: document.getElementById('startDate').value,
+                    breakfastTemplate: document.getElementById('breakfastTemplate').value,
+                    lunchTemplate: document.getElementById('lunchTemplate').value,
+                    lightLunchTemplate: document.getElementById('lightLunchTemplate').value,
+                    dinnerTemplate: document.getElementById('dinnerTemplate').value,
+                    logoDataURL: logoDataURL
+                };
+            }
+
+            // Load saved data from localStorage
+            function loadSavedData() {
+                const savedMenuData = dataManager.loadMenuData();
+                const savedFormData = dataManager.loadFormData();
+                
+                if (Object.keys(savedMenuData).length > 0) {
+                    menuData = savedMenuData;
+                }
+                
+                if (Object.keys(savedFormData).length > 0) {
+                    document.getElementById('companyName').value = savedFormData.companyName || 'Classic Tiffin Service by Navovia Next';
+                    document.getElementById('planName').value = savedFormData.planName || 'Premium Plan';
+                    document.getElementById('startDate').value = savedFormData.startDate || '2025-02-02';
+                    document.getElementById('breakfastTemplate').value = savedFormData.breakfastTemplate || 'Choose your beverages-\nTea\nCoffee\nMilk';
+                    document.getElementById('lunchTemplate').value = savedFormData.lunchTemplate || 'Roti\nRice\nSabzi\nDal\nSalad\nSweet';
+                    document.getElementById('lightLunchTemplate').value = savedFormData.lightLunchTemplate || 'Roti\nSabzi\nSalad\nSweet';
+                    document.getElementById('dinnerTemplate').value = savedFormData.dinnerTemplate || 'Roti\nRice\nSabzi\nDal\nSalad\nSweet';
+                    
+                    if (savedFormData.logoDataURL) {
+                        logoDataURL = savedFormData.logoDataURL;
+                        document.getElementById('menuLogo').src = logoDataURL;
+                    }
+                }
+            }
+            
+            // Logo upload functionality
+            const logoUpload = document.getElementById('logoUpload');
+            const menuLogo = document.getElementById('menuLogo');
+            let logoDataURL = '';
+            
+            logoUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        logoDataURL = event.target.result;
+                        menuLogo.src = logoDataURL;
+                        autoSave();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Generate menu functionality
+            const generateBtn = document.getElementById('generateBtn');
+            const daysContainer = document.getElementById('daysContainer');
+            const applyTemplatesBtn = document.getElementById('applyTemplatesBtn');
+            
+            generateBtn.addEventListener('click', function() {
+                generateMenu();
+                showNotification('Menu generated successfully!', 'success');
+            });
+            
+            // Apply templates to all days
+            applyTemplatesBtn.addEventListener('click', function() {
+                applyTemplatesToAllDays();
+                showNotification('Templates applied to all days!', 'success');
+            });
+            
+            // Store menu data for each day
+            let menuData = {};
+            
+            function generateMenu() {
+                // Clear previous days
+                daysContainer.innerHTML = '';
+                
+                // Get form values
+                const companyName = document.getElementById('companyName').value || 'Classic Tiffin Service by Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium Plan';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                // Auto-save form data
+                autoSave();
+                
+                // Update menu header
+                document.getElementById('menuCompanyName').textContent = companyName;
+                document.getElementById('menuPlanName').textContent = planName;
+                
+                // Generate 15 days
+                for (let i = 0; i < 15; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    
+                    const dateKey = formatDate(currentDate);
+                    
+                    // Initialize menu data for this date if not exists
+                    if (!menuData[dateKey]) {
+                        menuData[dateKey] = {
+                            breakfast: getDefaultBreakfast(i),
+                            lunch: getDefaultLunch(i),
+                            lightLunch: getDefaultLightLunch(i),
+                            dinner: getDefaultDinner(i)
+                        };
+                    }
+                    
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'day-card';
+                    dayCard.setAttribute('data-date', dateKey);
+                    
+                    // Set logo as background if available
+                    if (logoDataURL) {
+                        dayCard.style.setProperty('--logo-bg', `url(${logoDataURL})`);
+                    }
+                    
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'day-header';
+                    
+                    const dateElement = document.createElement('div');
+                    dateElement.className = 'date';
+                    dateElement.textContent = dateKey;
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'day';
+                    dayElement.textContent = getDayName(currentDate);
+                    
+                    dayHeader.appendChild(dateElement);
+                    dayHeader.appendChild(dayElement);
+                    
+                    // Add meal sections with click-to-edit functionality
+                    const breakfastSection = createMealSection('Breakfast', menuData[dateKey].breakfast, dateKey, 'breakfast', 'breakfast-title');
+                    const lunchSection = createMealSection('Lunch', menuData[dateKey].lunch, dateKey, 'lunch', 'lunch-title');
+                    const lightLunchSection = createMealSection('Light Lunch', menuData[dateKey].lightLunch, dateKey, 'lightLunch', 'light-lunch-title');
+                    const dinnerSection = createMealSection('Dinner', menuData[dateKey].dinner, dateKey, 'dinner', 'dinner-title');
+                    
+                    dayCard.appendChild(dayHeader);
+                    dayCard.appendChild(breakfastSection);
+                    dayCard.appendChild(lunchSection);
+                    dayCard.appendChild(lightLunchSection);
+                    dayCard.appendChild(dinnerSection);
+                    
+                    daysContainer.appendChild(dayCard);
+                }
+                
+                // Auto-save menu data
+                autoSave();
+            }
+            
+            // Default menu data
+            function getDefaultBreakfast(dayIndex) {
+                const breakfasts = [
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Aalu Paratha\n- Dahi\n- Chutney\n- 2 Banana\n- Achar",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Aalu Sandwich\n- Souce\n- Upma\n- 2 Banana",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- TriKona Paratha\n- Aalu Kala Chana Fry\n- Suji Halwa",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Aalu Pyaj Paratha\n- Dahi\n- Souce\n- 2PC Banana\n- Chutney",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Bread Pakoda\n- Souce\n- Green Chutney\n- 2 PC Banana",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Poori\n- Aalu Subji\n- Suji Halwa\n- Achar",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Aalu Kachori\n- Chole\n- sauce\n- Kheer",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Palak Paratha\n- Sauce\n- Dahi\n- 2PC banana",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Veg Sandwich\n- Sauce\n- Poha\n- Sevaiya",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Poori\n- Chhole\n- Suji halwa\n- Achar",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Soyabean Subji\n- Butter Roti\n- Sevaiya\n- Achar",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Aalu Pyaj Paratha\n- Dahi\n- Souce\n- Gajar halwa",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Paneer Paratha\n- Dahi\n- Souce\n- 2PC Rasgulla",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Dosa\n- Sambar\n- Souce\n- 2PC Banana",
+                    "Choose your beverages-\nTea\nCoffee\nMilk\n\n- Idli\n- Shambar\n- Coconut Chutney"
+                ];
+                return breakfasts[dayIndex] || "Choose your beverages-\nTea\nCoffee\nMilk";
+            }
+            
+            function getDefaultLunch(dayIndex) {
+                const lunches = [
+                    "- Roti\n- Rice\n- Aalu Gobhi\n- Dali Fry\n- Salad\n- Sweet/Salt Dahi",
+                    "- Paratha\n- Rice\n- Mix Veg\n- Matar Paneer\n- Salad\n- Suji Halwa",
+                    "- Roti\n- Jeera Rice\n- Aalu Jeera\n- Kadhi Pkora\n- Salad\n- 2PC Rasgulla",
+                    "- Roti\n- Rice\n- Bhindi Masala\n- Rajma\n- Salad\n- Rayata",
+                    "- Paratha\n- Rice\n- Baigan bharta\n- Mix Dall Fry\n- Salad\n- 2PC Rasgulla",
+                    "- Butter Roti\n- Rice\n- Palak Aalu\n- Paner Butter Masala\n- Salad\n- Aam Pna",
+                    "- Roti\n- Rice\n- Masoor dall fry\n- Mix Veg\n- Suji Halwa",
+                    "- Butter Roti\n- Rice\n- Chhole\n- Aalu jeera\n- Salad\n- 2PC Rasgulla",
+                    "- Fried Rice\n- Manchurian",
+                    "- Paratha\n- Rice\n- Aalu gobhi\n- Masoor dall fry\n- salad\n- 2PC Rasgulla",
+                    "- Rott\n- Rice\n- Bhindi Masala\n- Dall fry\n- Salad\n- Suji Halwa",
+                    "- Rott\n- Rice\n- Mix Veg\n- Paneer Butter Masala\n- Aam pna\n- Salad",
+                    "- Roti\n- Rice\n- Chhole\n- Jeera Aalu\n- Salad\n- 2PC Banana",
+                    "- Fried Rice\n- Gobhi Manchurian",
+                    "- Chowmin\n- Manchurian"
+                ];
+                return lunches[dayIndex] || "- Roti\n- Rice\n- Sabzi\n- Dal\n- Salad\n- Sweet";
+            }
+            
+            function getDefaultLightLunch(dayIndex) {
+                const lightLunches = [
+                    "- Roti\n- Aalu Gobhi\n- Salad\n- Sweet/Salt Dahi",
+                    "- Paratha\n- Matar Paneer\n- Salad\n- Suji Halwa",
+                    "- Jeera Rice\n- Kadhi Pkora\n- Salad\n- 2PC Rasgulla",
+                    "- Roti\n- Bhindi Masala\n- Rayata\n- Salad",
+                    "- Rice\n- Mix Dall Fry\n- Salad\n- 2PC Rasgulla",
+                    "- Butter Roti\n- Paner Butter Masala\n- Salad\n- Aam Pna",
+                    "- Rice\n- Mix Veg\n- Salad\n- Suji Halwa",
+                    "- Butter Roti\n- Chhole\n- Salad\n- 2PC Rasgulla",
+                    "- Fried Rice\n- Manchurian",
+                    "- Paratha\n- Aalu gobhi\n- Salad\n- 2PC Rasgulla",
+                    "- Rott\n- Bhindi Masala\n- Salad\n- Suji Halwa",
+                    "- Rice\n- Paneer Butter Masala",
+                    "- Rice\n- Chhole\n- Salad\n- 2PC Banana",
+                    "- Fried Rice\n- Gobhi Manchurian",
+                    "- Chowmin\n- Manchurian"
+                ];
+                return lightLunches[dayIndex] || "- Roti\n- Sabzi\n- Salad\n- Sweet";
+            }
+            
+            function getDefaultDinner(dayIndex) {
+                const dinners = [
+                    "- Butter Roti\n- Jeera Rice\n- Aalu Jeera\n- Kadhi Pkora\n- Salad\n- 2PC Rasgulla",
+                    "- Roti\n- Rice\n- Aalu Gobhi\n- Dali Fry\n- Salad\n- Sweet/Salt Dahi",
+                    "- Paratha\n- Lemon Rice\n- Mix Veg\n- Matar Paneer\n- Salad\n- Suji Halwa",
+                    "- Roti\n- Rice\n- Moong daal Fry\n- Bhaigan bharta\n- Salad\n- Rayata",
+                    "- Butter Roti\n- Jeera Rice\n- Aalu Jeera\n- Kadhi Pkora\n- Salad\n- 2PC Rasgulla",
+                    "- Paratha\n- Rice\n- Mix Veg\n- Matar Paner\n- Salad\n- Aam pna",
+                    "- Roti\n- Rice\n- Rajma\n- Mix Veg\n- Salad\n- Badam milk",
+                    "- Roti\n- Rice\n- Aalu Palak\n- Masoor dall fry\n- Salad\n- Mix juice",
+                    "- Roti\n- Rice\n- Balgan bharta\n- Shahi Paner\n- Salad\n- Suji Halwa",
+                    "- Rott\n- Rice\n- Chhole\n- Aalu jeera\n- Salad\n- 2 PC Rasgulla",
+                    "- Paratha\n- Jeera Rice\n- Paneer Bhurji\n- Mix Dall\n- Salad\n- Rayata",
+                    "- Rott\n- Rice\n- Mix Veg\n- Home Style Paneer\n- Salad\n- Gajar Halwa",
+                    "- Butter Roti\n- Jeera Rice\n- Aalu Jeera\n- Kadhi PKora\n- Salad\n- 2PC Rasgulla",
+                    "- Paratha\n- Rice\n- Aalu Gobhi\n- Dail Fry\n- Salad\n- Sweet/Salt Dahi",
+                    "- Paratha\n- Lemon Rice\n- Mix Veg\n- Matar Paneer\n- Salad\n- Suji Halwa"
+                ];
+                return dinners[dayIndex] || "- Roti\n- Rice\n- Sabzi\n- Dal\n- Salad\n- Sweet";
+            }
+            
+            function applyTemplatesToAllDays() {
+                const breakfastTemplate = document.getElementById('breakfastTemplate').value;
+                const lunchTemplate = document.getElementById('lunchTemplate').value;
+                const lightLunchTemplate = document.getElementById('lightLunchTemplate').value;
+                const dinnerTemplate = document.getElementById('dinnerTemplate').value;
+                
+                // Get start date
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                // Update all days with new templates
+                for (let i = 0; i < 15; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    const dateKey = formatDate(currentDate);
+                    
+                    // Update menu data
+                    if (breakfastTemplate) menuData[dateKey].breakfast = breakfastTemplate;
+                    if (lunchTemplate) menuData[dateKey].lunch = lunchTemplate;
+                    if (lightLunchTemplate) menuData[dateKey].lightLunch = lightLunchTemplate;
+                    if (dinnerTemplate) menuData[dateKey].dinner = dinnerTemplate;
+                    
+                    // Update UI if day card exists
+                    const dayCard = document.querySelector(`.day-card[data-date="${dateKey}"]`);
+                    if (dayCard) {
+                        if (breakfastTemplate) dayCard.querySelector('[data-meal="breakfast"]').textContent = breakfastTemplate;
+                        if (lunchTemplate) dayCard.querySelector('[data-meal="lunch"]').textContent = lunchTemplate;
+                        if (lightLunchTemplate) dayCard.querySelector('[data-meal="lightLunch"]').textContent = lightLunchTemplate;
+                        if (dinnerTemplate) dayCard.querySelector('[data-meal="dinner"]').textContent = dinnerTemplate;
+                    }
+                }
+                
+                // Auto-save
+                autoSave();
+            }
+            
+            function createMealSection(title, items, dateKey, mealType, titleClass) {
+                const section = document.createElement('div');
+                section.className = 'meal-section';
+                
+                const titleElement = document.createElement('div');
+                titleElement.className = `meal-title ${titleClass}`;
+                titleElement.textContent = title;
+                
+                const itemsElement = document.createElement('div');
+                itemsElement.className = 'meal-items';
+                itemsElement.textContent = items;
+                itemsElement.setAttribute('data-date', dateKey);
+                itemsElement.setAttribute('data-meal', mealType);
+                
+                // Add click event to edit meal
+                itemsElement.addEventListener('click', function() {
+                    openEditModal(dateKey, mealType, items);
+                });
+                
+                section.appendChild(titleElement);
+                section.appendChild(itemsElement);
+                
+                return section;
+            }
+            
+            function formatDate(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
+            }
+            
+            function getDayName(date) {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return days[date.getDay()];
+            }
+            
+            // Modal functionality for editing meals
+            const editModal = document.getElementById('editModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelEdit = document.getElementById('cancelEdit');
+            const saveEdit = document.getElementById('saveEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const editBreakfast = document.getElementById('editBreakfast');
+            const editLunch = document.getElementById('editLunch');
+            const editLightLunch = document.getElementById('editLightLunch');
+            const editDinner = document.getElementById('editDinner');
+            
+            let currentEditDate = '';
+            let currentEditMeal = '';
+            
+            function openEditModal(dateKey, mealType, currentValue) {
+                currentEditDate = dateKey;
+                currentEditMeal = mealType;
+                
+                modalTitle.textContent = `Edit Menu for ${dateKey}`;
+                
+                // Set current values in modal
+                editBreakfast.value = menuData[dateKey].breakfast;
+                editLunch.value = menuData[dateKey].lunch;
+                editLightLunch.value = menuData[dateKey].lightLunch;
+                editDinner.value = menuData[dateKey].dinner;
+                
+                editModal.style.display = 'flex';
+            }
+            
+            function closeEditModal() {
+                editModal.style.display = 'none';
+                currentEditDate = '';
+                currentEditMeal = '';
+            }
+            
+            closeModal.addEventListener('click', closeEditModal);
+            cancelEdit.addEventListener('click', closeEditModal);
+            
+            saveEdit.addEventListener('click', function() {
+                if (currentEditDate) {
+                    // Update menu data
+                    menuData[currentEditDate].breakfast = editBreakfast.value;
+                    menuData[currentEditDate].lunch = editLunch.value;
+                    menuData[currentEditDate].lightLunch = editLightLunch.value;
+                    menuData[currentEditDate].dinner = editDinner.value;
+                    
+                    // Update display
+                    const dayCard = document.querySelector(`.day-card[data-date="${currentEditDate}"]`);
+                    if (dayCard) {
+                        dayCard.querySelector('[data-meal="breakfast"]').textContent = editBreakfast.value;
+                        dayCard.querySelector('[data-meal="lunch"]').textContent = editLunch.value;
+                        dayCard.querySelector('[data-meal="lightLunch"]').textContent = editLightLunch.value;
+                        dayCard.querySelector('[data-meal="dinner"]').textContent = editDinner.value;
+                    }
+                    
+                    // Auto-save
+                    autoSave();
+                    
+                    showNotification('Menu updated successfully!', 'success');
+                    closeEditModal();
+                }
+            });
+            
+            // Close modal when clicking outside
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+            
+            // ========== DOWNLOAD FUNCTIONS ==========
+            
+            // Function 1: Download 3 Days Sets (5 Files)
+            async function download3DaysSets() {
+                showNotification('Preparing 5 files (3 days each)...', 'info');
+                
+                const companyName = document.getElementById('companyName').value || 'Classic Tiffin Service by Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium Plan';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                try {
+                    for (let fileIndex = 0; fileIndex < 5; fileIndex++) {
+                        // Create container
+                        const container = document.createElement('div');
+                        container.style.position = 'fixed';
+                        container.style.top = '0';
+                        container.style.left = '0';
+                        container.style.width = '1000px';
+                        container.style.minHeight = '800px';
+                        container.style.padding = '40px';
+                        container.style.backgroundColor = '#f8fafc';
+                        container.style.borderRadius = '20px';
+                        container.style.fontFamily = "'Poppins', sans-serif";
+                        container.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+                        container.style.border = '2px solid rgba(255, 255, 255, 0.7)';
+                        
+                        // Add gradient border
+                        const topBorder = document.createElement('div');
+                        topBorder.style.position = 'absolute';
+                        topBorder.style.top = '0';
+                        topBorder.style.left = '0';
+                        topBorder.style.right = '0';
+                        topBorder.style.height = '6px';
+                        topBorder.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4)';
+                        container.appendChild(topBorder);
+                        
+                        // Header
+                        const header = document.createElement('div');
+                        header.style.textAlign = 'center';
+                        header.style.marginBottom = '30px';
+                        header.style.padding = '20px';
+                        header.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
+                        header.style.borderRadius = '15px';
+                        
+                        if (logoDataURL) {
+                            const logo = document.createElement('img');
+                            logo.src = logoDataURL;
+                            logo.style.maxWidth = '150px';
+                            logo.style.maxHeight = '80px';
+                            logo.style.margin = '0 auto 15px';
+                            logo.style.display = 'block';
+                            logo.style.borderRadius = '10px';
+                            header.appendChild(logo);
+                        }
+                        
+                        const title = document.createElement('h2');
+                        title.textContent = companyName;
+                        title.style.color = '#2c3e50';
+                        title.style.fontSize = '32px';
+                        title.style.marginBottom = '5px';
+                        title.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b)';
+                        title.style.webkitBackgroundClip = 'text';
+                        title.style.webkitTextFillColor = 'transparent';
+                        header.appendChild(title);
+                        
+                        const subtitle = document.createElement('p');
+                        subtitle.textContent = `3 Days Menu - Set ${fileIndex + 1} (Days ${fileIndex*3 + 1}-${fileIndex*3 + 3})`;
+                        subtitle.style.color = '#7f8c8d';
+                        subtitle.style.fontSize = '18px';
+                        subtitle.style.marginBottom = '15px';
+                        header.appendChild(subtitle);
+                        
+                        const planBadge = document.createElement('div');
+                        planBadge.textContent = planName;
+                        planBadge.style.display = 'inline-block';
+                        planBadge.style.padding = '10px 20px';
+                        planBadge.style.backgroundColor = '#667eea';
+                        planBadge.style.backgroundImage = 'linear-gradient(135deg, #667eea, #764ba2)';
+                        planBadge.style.color = 'white';
+                        planBadge.style.borderRadius = '25px';
+                        planBadge.style.fontWeight = '600';
+                        planBadge.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.15)';
+                        header.appendChild(planBadge);
+                        
+                        container.appendChild(header);
+                        
+                        // Days grid
+                        const daysGrid = document.createElement('div');
+                        daysGrid.style.display = 'grid';
+                        daysGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                        daysGrid.style.gap = '20px';
+                        daysGrid.style.marginTop = '30px';
+                        
+                        for (let dayIndex = 0; dayIndex < 3; dayIndex++) {
+                            const dayNumber = fileIndex * 3 + dayIndex;
+                            if (dayNumber >= 15) break;
+                            
+                            const currentDate = new Date(startDate);
+                            currentDate.setDate(startDate.getDate() + dayNumber);
+                            const dateKey = formatDate(currentDate);
+                            const dayName = getDayName(currentDate);
+                            
+                            const dayCard = document.createElement('div');
+                            dayCard.style.padding = '20px';
+                            dayCard.style.backgroundColor = 'white';
+                            dayCard.style.borderRadius = '15px';
+                            dayCard.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+                            dayCard.style.border = '2px solid rgba(255, 255, 255, 0.8)';
+                            
+                            // Day header
+                            const dayHeader = document.createElement('div');
+                            dayHeader.style.textAlign = 'center';
+                            dayHeader.style.marginBottom = '15px';
+                            dayHeader.style.paddingBottom = '10px';
+                            dayHeader.style.borderBottom = '2px dashed #ddd';
+                            
+                            const dateElem = document.createElement('div');
+                            dateElem.textContent = dateKey;
+                            dateElem.style.fontWeight = 'bold';
+                            dateElem.style.fontSize = '16px';
+                            dateElem.style.color = '#2c3e50';
+                            dayHeader.appendChild(dateElem);
+                            
+                            const dayElem = document.createElement('div');
+                            dayElem.textContent = dayName;
+                            dayElem.style.color = '#7f8c8d';
+                            dayElem.style.fontSize = '14px';
+                            dayElem.style.marginTop = '5px';
+                            dayHeader.appendChild(dayElem);
+                            
+                            dayCard.appendChild(dayHeader);
+                            
+                            // Meals
+                            const meals = [
+                                { type: 'breakfast', name: 'Breakfast', color: '#ff7e5f' },
+                                { type: 'lunch', name: 'Lunch', color: '#667eea' },
+                                { type: 'lightLunch', name: 'Light Lunch', color: '#f093fb' },
+                                { type: 'dinner', name: 'Dinner', color: '#4facfe' }
+                            ];
+                            
+                            meals.forEach(meal => {
+                                const mealDiv = document.createElement('div');
+                                mealDiv.style.marginBottom = '12px';
+                                
+                                const mealTitle = document.createElement('div');
+                                mealTitle.textContent = meal.name;
+                                mealTitle.style.fontSize = '13px';
+                                mealTitle.style.fontWeight = 'bold';
+                                mealTitle.style.marginBottom = '5px';
+                                mealTitle.style.padding = '5px 10px';
+                                mealTitle.style.backgroundColor = meal.color;
+                                mealTitle.style.color = 'white';
+                                mealTitle.style.borderRadius = '6px';
+                                mealTitle.style.display = 'inline-block';
+                                
+                                const mealContent = document.createElement('div');
+                                mealContent.textContent = menuData[dateKey]?.[meal.type] || '';
+                                mealContent.style.fontSize = '12px';
+                                mealContent.style.whiteSpace = 'pre-line';
+                                mealContent.style.lineHeight = '1.4';
+                                mealContent.style.padding = '8px';
+                                mealContent.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                                mealContent.style.borderRadius = '8px';
+                                mealContent.style.border = '1px dashed rgba(0, 0, 0, 0.1)';
+                                
+                                mealDiv.appendChild(mealTitle);
+                                mealDiv.appendChild(mealContent);
+                                dayCard.appendChild(mealDiv);
+                            });
+                            
+                            daysGrid.appendChild(dayCard);
+                        }
+                        
+                        container.appendChild(daysGrid);
+                        document.body.appendChild(container);
+                        
+                        // Generate image
+                        await new Promise(resolve => {
+                            setTimeout(() => {
+                                html2canvas(container, {
+                                    scale: 2,
+                                    useCORS: true,
+                                    logging: false,
+                                    backgroundColor: '#f8fafc',
+                                    allowTaint: false
+                                }).then(function(canvas) {
+                                    const link = document.createElement('a');
+                                    link.download = `Classic-Tiffin-3Days-Set-${fileIndex + 1}.png`;
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.click();
+                                    
+                                    document.body.removeChild(container);
+                                    resolve();
+                                });
+                            }, 500);
+                        });
+                        
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
+                    
+                    showNotification('5 files (3 days each) downloaded successfully!', 'success');
+                } catch (error) {
+                    console.error('Error downloading 3 days sets:', error);
+                    showNotification('Error generating files. Please try again.', 'error');
+                }
+            }
+            
+            // Function 2: Download 15 Days of specific meal
+            async function download15DaysMeal(mealType, mealName) {
+                showNotification(`Preparing all 15 days ${mealName}...`, 'info');
+                
+                const companyName = document.getElementById('companyName').value || 'Classic Tiffin Service by Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium Plan';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                try {
+                    // Create container for all 15 days
+                    const container = document.createElement('div');
+                    container.style.position = 'fixed';
+                    container.style.top = '0';
+                    container.style.left = '0';
+                    container.style.width = '1200px';
+                    container.style.minHeight = '1600px';
+                    container.style.padding = '40px';
+                    container.style.backgroundColor = '#f8fafc';
+                    container.style.borderRadius = '20px';
+                    container.style.fontFamily = "'Poppins', sans-serif";
+                    container.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+                    container.style.border = '2px solid rgba(255, 255, 255, 0.7)';
+                    
+                    // Add gradient border
+                    const topBorder = document.createElement('div');
+                    topBorder.style.position = 'absolute';
+                    topBorder.style.top = '0';
+                    topBorder.style.left = '0';
+                    topBorder.style.right = '0';
+                    topBorder.style.height = '6px';
+                    topBorder.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4)';
+                    container.appendChild(topBorder);
+                    
+                    // Header
+                    const header = document.createElement('div');
+                    header.style.textAlign = 'center';
+                    header.style.marginBottom = '30px';
+                    header.style.padding = '20px';
+                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
+                    header.style.borderRadius = '15px';
+                    
+                    if (logoDataURL) {
+                        const logo = document.createElement('img');
+                        logo.src = logoDataURL;
+                        logo.style.maxWidth = '150px';
+                        logo.style.maxHeight = '80px';
+                        logo.style.margin = '0 auto 15px';
+                        logo.style.display = 'block';
+                        logo.style.borderRadius = '10px';
+                        header.appendChild(logo);
+                    }
+                    
+                    const title = document.createElement('h2');
+                    title.textContent = companyName;
+                    title.style.color = '#2c3e50';
+                    title.style.fontSize = '32px';
+                    title.style.marginBottom = '5px';
+                    title.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b)';
+                    title.style.webkitBackgroundClip = 'text';
+                    title.style.webkitTextFillColor = 'transparent';
+                    header.appendChild(title);
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.textContent = `15 Days ${mealName} Menu`;
+                    subtitle.style.color = '#7f8c8d';
+                    subtitle.style.fontSize = '20px';
+                    subtitle.style.marginBottom = '15px';
+                    header.appendChild(subtitle);
+                    
+                    const planBadge = document.createElement('div');
+                    planBadge.textContent = planName;
+                    planBadge.style.display = 'inline-block';
+                    planBadge.style.padding = '10px 20px';
+                    planBadge.style.backgroundColor = '#667eea';
+                    planBadge.style.backgroundImage = 'linear-gradient(135deg, #667eea, #764ba2)';
+                    planBadge.style.color = 'white';
+                    planBadge.style.borderRadius = '25px';
+                    planBadge.style.fontWeight = '600';
+                    planBadge.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.15)';
+                    header.appendChild(planBadge);
+                    
+                    container.appendChild(header);
+                    
+                    // Meal title
+                    const mealHeader = document.createElement('div');
+                    mealHeader.style.textAlign = 'center';
+                    mealHeader.style.marginBottom = '30px';
+                    
+                    const mealTitle = document.createElement('div');
+                    mealTitle.textContent = mealName.toUpperCase();
+                    mealTitle.style.display = 'inline-block';
+                    mealTitle.style.padding = '15px 30px';
+                    mealTitle.style.fontSize = '24px';
+                    mealTitle.style.fontWeight = 'bold';
+                    mealTitle.style.letterSpacing = '1px';
+                    mealTitle.style.borderRadius = '10px';
+                    
+                    if (mealType === 'breakfast') {
+                        mealTitle.style.background = 'linear-gradient(135deg, #ff7e5f, #feb47b)';
+                    } else if (mealType === 'lunch') {
+                        mealTitle.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                    } else {
+                        mealTitle.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+                    }
+                    mealTitle.style.color = 'white';
+                    mealTitle.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.2)';
+                    
+                    mealHeader.appendChild(mealTitle);
+                    container.appendChild(mealHeader);
+                    
+                    // Days grid (5 columns x 3 rows)
+                    const daysGrid = document.createElement('div');
+                    daysGrid.style.display = 'grid';
+                    daysGrid.style.gridTemplateColumns = 'repeat(5, 1fr)';
+                    daysGrid.style.gap = '20px';
+                    
+                    for (let i = 0; i < 15; i++) {
+                        const currentDate = new Date(startDate);
+                        currentDate.setDate(startDate.getDate() + i);
+                        const dateKey = formatDate(currentDate);
+                        const dayName = getDayName(currentDate);
+                        
+                        const dayCard = document.createElement('div');
+                        dayCard.style.padding = '15px';
+                        dayCard.style.backgroundColor = 'white';
+                        dayCard.style.borderRadius = '12px';
+                        dayCard.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+                        dayCard.style.border = '2px solid rgba(255, 255, 255, 0.8)';
+                        
+                        // Date header
+                        const dateHeader = document.createElement('div');
+                        dateHeader.style.textAlign = 'center';
+                        dateHeader.style.marginBottom = '10px';
+                        dateHeader.style.paddingBottom = '8px';
+                        dateHeader.style.borderBottom = '2px dashed #ddd';
+                        
+                        const dateElem = document.createElement('div');
+                        dateElem.textContent = dateKey;
+                        dateElem.style.fontWeight = 'bold';
+                        dateElem.style.fontSize = '14px';
+                        dateElem.style.color = '#2c3e50';
+                        dateHeader.appendChild(dateElem);
+                        
+                        const dayElem = document.createElement('div');
+                        dayElem.textContent = dayName;
+                        dayElem.style.color = '#7f8c8d';
+                        dayElem.style.fontSize = '12px';
+                        dayElem.style.marginTop = '3px';
+                        dateHeader.appendChild(dayElem);
+                        
+                        dayCard.appendChild(dateHeader);
+                        
+                        // Meal content
+                        const mealContent = document.createElement('div');
+                        mealContent.textContent = menuData[dateKey]?.[mealType] || '';
+                        mealContent.style.fontSize = '12px';
+                        mealContent.style.whiteSpace = 'pre-line';
+                        mealContent.style.lineHeight = '1.4';
+                        mealContent.style.padding = '10px';
+                        mealContent.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                        mealContent.style.borderRadius = '8px';
+                        mealContent.style.border = '1px dashed rgba(0, 0, 0, 0.1)';
+                        mealContent.style.minHeight = '100px';
+                        
+                        dayCard.appendChild(mealContent);
+                        daysGrid.appendChild(dayCard);
+                    }
+                    
+                    container.appendChild(daysGrid);
+                    document.body.appendChild(container);
+                    
+                    // Generate image
+                    await new Promise(resolve => {
+                        setTimeout(() => {
+                            html2canvas(container, {
+                                scale: 2,
+                                useCORS: true,
+                                logging: false,
+                                backgroundColor: '#f8fafc',
+                                allowTaint: false
+                            }).then(function(canvas) {
+                                const link = document.createElement('a');
+                                link.download = `Classic-Tiffin-15Days-${mealName}.png`;
+                                link.href = canvas.toDataURL('image/png');
+                                link.click();
+                                
+                                document.body.removeChild(container);
+                                resolve();
+                            });
+                        }, 500);
+                    });
+                    
+                    showNotification(`15 days ${mealName} downloaded successfully!`, 'success');
+                } catch (error) {
+                    console.error(`Error downloading 15 days ${mealName}:`, error);
+                    showNotification(`Error generating ${mealName} file. Please try again.`, 'error');
+                }
+            }
+            
+            // Function 3: Download individual meals (15 separate files)
+            async function downloadIndividualMeals(mealType, mealName) {
+                showNotification(`Preparing 15 individual ${mealName} files...`, 'info');
+                
+                const companyName = document.getElementById('companyName').value || 'Classic Tiffin Service by Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium Plan';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                try {
+                    for (let i = 0; i < 15; i++) {
+                        const currentDate = new Date(startDate);
+                        currentDate.setDate(startDate.getDate() + i);
+                        const dateKey = formatDate(currentDate);
+                        const dayName = getDayName(currentDate);
+                        
+                        const mealData = menuData[dateKey]?.[mealType] || '';
+                        
+                        // Create container
+                        const container = document.createElement('div');
+                        container.style.position = 'fixed';
+                        container.style.top = '0';
+                        container.style.left = '0';
+                        container.style.width = '600px';
+                        container.style.height = '400px';
+                        container.style.padding = '30px';
+                        container.style.backgroundColor = '#f8fafc';
+                        container.style.borderRadius = '20px';
+                        container.style.fontFamily = "'Poppins', sans-serif";
+                        container.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+                        container.style.border = '2px solid rgba(255, 255, 255, 0.7)';
+                        
+                        // Add gradient border
+                        const topBorder = document.createElement('div');
+                        topBorder.style.position = 'absolute';
+                        topBorder.style.top = '0';
+                        topBorder.style.left = '0';
+                        topBorder.style.right = '0';
+                        topBorder.style.height = '6px';
+                        topBorder.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4)';
+                        container.appendChild(topBorder);
+                        
+                        // Header
+                        const header = document.createElement('div');
+                        header.style.textAlign = 'center';
+                        header.style.marginBottom = '20px';
+                        
+                        if (logoDataURL) {
+                            const logo = document.createElement('img');
+                            logo.src = logoDataURL;
+                            logo.style.maxWidth = '100px';
+                            logo.style.maxHeight = '60px';
+                            logo.style.margin = '0 auto 10px';
+                            logo.style.display = 'block';
+                            logo.style.borderRadius = '8px';
+                            header.appendChild(logo);
+                        }
+                        
+                        const title = document.createElement('h2');
+                        title.textContent = companyName;
+                        title.style.color = '#2c3e50';
+                        title.style.fontSize = '24px';
+                        title.style.marginBottom = '5px';
+                        title.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b)';
+                        title.style.webkitBackgroundClip = 'text';
+                        title.style.webkitTextFillColor = 'transparent';
+                        header.appendChild(title);
+                        
+                        const subtitle = document.createElement('p');
+                        subtitle.textContent = `${mealName} - ${dateKey} (${dayName})`;
+                        subtitle.style.color = '#7f8c8d';
+                        subtitle.style.fontSize = '16px';
+                        subtitle.style.marginBottom = '10px';
+                        header.appendChild(subtitle);
+                        
+                        const planBadge = document.createElement('div');
+                        planBadge.textContent = planName;
+                        planBadge.style.display = 'inline-block';
+                        planBadge.style.padding = '8px 16px';
+                        planBadge.style.backgroundColor = '#667eea';
+                        planBadge.style.backgroundImage = 'linear-gradient(135deg, #667eea, #764ba2)';
+                        planBadge.style.color = 'white';
+                        planBadge.style.borderRadius = '20px';
+                        planBadge.style.fontWeight = '600';
+                        planBadge.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.15)';
+                        header.appendChild(planBadge);
+                        
+                        container.appendChild(header);
+                        
+                        // Meal content
+                        const mealContainer = document.createElement('div');
+                        mealContainer.style.textAlign = 'center';
+                        mealContainer.style.marginTop = '20px';
+                        
+                        const mealTitle = document.createElement('div');
+                        mealTitle.textContent = mealName.toUpperCase();
+                        mealTitle.style.display = 'inline-block';
+                        mealTitle.style.padding = '12px 24px';
+                        mealTitle.style.marginBottom = '15px';
+                        mealTitle.style.fontSize = '20px';
+                        mealTitle.style.fontWeight = 'bold';
+                        mealTitle.style.letterSpacing = '1px';
+                        mealTitle.style.borderRadius = '10px';
+                        
+                        if (mealType === 'breakfast') {
+                            mealTitle.style.background = 'linear-gradient(135deg, #ff7e5f, #feb47b)';
+                        } else if (mealType === 'lunch') {
+                            mealTitle.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                        } else {
+                            mealTitle.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+                        }
+                        mealTitle.style.color = 'white';
+                        mealTitle.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+                        
+                        const mealContent = document.createElement('div');
+                        mealContent.textContent = mealData;
+                        mealContent.style.fontSize = '16px';
+                        mealContent.style.lineHeight = '1.6';
+                        mealContent.style.padding = '20px';
+                        mealContent.style.backgroundColor = 'white';
+                        mealContent.style.borderRadius = '12px';
+                        mealContent.style.border = '2px dashed rgba(102, 126, 234, 0.3)';
+                        mealContent.style.whiteSpace = 'pre-line';
+                        mealContent.style.textAlign = 'left';
+                        mealContent.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+                        mealContent.style.maxHeight = '200px';
+                        mealContent.style.overflowY = 'auto';
+                        
+                        mealContainer.appendChild(mealTitle);
+                        mealContainer.appendChild(mealContent);
+                        container.appendChild(mealContainer);
+                        
+                        document.body.appendChild(container);
+                        
+                        // Generate image
+                        await new Promise(resolve => {
+                            setTimeout(() => {
+                                html2canvas(container, {
+                                    scale: 2,
+                                    useCORS: true,
+                                    logging: false,
+                                    backgroundColor: '#f8fafc',
+                                    allowTaint: false
+                                }).then(function(canvas) {
+                                    const link = document.createElement('a');
+                                    const fileName = `Classic-Tiffin-${mealName}-${dateKey.replace(/\./g, '-')}.png`;
+                                    link.download = fileName;
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.click();
+                                    
+                                    document.body.removeChild(container);
+                                    resolve();
+                                });
+                            }, 300);
+                        });
+                        
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                    
+                    showNotification(`15 individual ${mealName} files downloaded successfully!`, 'success');
+                } catch (error) {
+                    console.error(`Error downloading individual ${mealName}:`, error);
+                    showNotification(`Error generating ${mealName} files. Please try again.`, 'error');
+                }
+            }
+            
+            // Function 4: Download 3 days specific meal sets
+            async function download3DaysMealSets(mealType, mealName) {
+                showNotification(`Preparing 5 files of 3 days ${mealName} sets...`, 'info');
+                
+                const companyName = document.getElementById('companyName').value || 'Classic Tiffin Service by Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium Plan';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                try {
+                    for (let fileIndex = 0; fileIndex < 5; fileIndex++) {
+                        // Create container
+                        const container = document.createElement('div');
+                        container.style.position = 'fixed';
+                        container.style.top = '0';
+                        container.style.left = '0';
+                        container.style.width = '800px';
+                        container.style.height = '600px';
+                        container.style.padding = '30px';
+                        container.style.backgroundColor = '#f8fafc';
+                        container.style.borderRadius = '20px';
+                        container.style.fontFamily = "'Poppins', sans-serif";
+                        container.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+                        container.style.border = '2px solid rgba(255, 255, 255, 0.7)';
+                        
+                        // Add gradient border
+                        const topBorder = document.createElement('div');
+                        topBorder.style.position = 'absolute';
+                        topBorder.style.top = '0';
+                        topBorder.style.left = '0';
+                        topBorder.style.right = '0';
+                        topBorder.style.height = '6px';
+                        topBorder.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4)';
+                        container.appendChild(topBorder);
+                        
+                        // Header
+                        const header = document.createElement('div');
+                        header.style.textAlign = 'center';
+                        header.style.marginBottom = '20px';
+                        
+                        if (logoDataURL) {
+                            const logo = document.createElement('img');
+                            logo.src = logoDataURL;
+                            logo.style.maxWidth = '120px';
+                            logo.style.maxHeight = '70px';
+                            logo.style.margin = '0 auto 10px';
+                            logo.style.display = 'block';
+                            logo.style.borderRadius = '8px';
+                            header.appendChild(logo);
+                        }
+                        
+                        const title = document.createElement('h2');
+                        title.textContent = companyName;
+                        title.style.color = '#2c3e50';
+                        title.style.fontSize = '28px';
+                        title.style.marginBottom = '5px';
+                        title.style.background = 'linear-gradient(90deg, #ff7e5f, #feb47b)';
+                        title.style.webkitBackgroundClip = 'text';
+                        title.style.webkitTextFillColor = 'transparent';
+                        header.appendChild(title);
+                        
+                        const subtitle = document.createElement('p');
+                        subtitle.textContent = `3 Days ${mealName} - Set ${fileIndex + 1}`;
+                        subtitle.style.color = '#7f8c8d';
+                        subtitle.style.fontSize = '18px';
+                        subtitle.style.marginBottom = '10px';
+                        header.appendChild(subtitle);
+                        
+                        const planBadge = document.createElement('div');
+                        planBadge.textContent = planName;
+                        planBadge.style.display = 'inline-block';
+                        planBadge.style.padding = '8px 16px';
+                        planBadge.style.backgroundColor = '#667eea';
+                        planBadge.style.backgroundImage = 'linear-gradient(135deg, #667eea, #764ba2)';
+                        planBadge.style.color = 'white';
+                        planBadge.style.borderRadius = '20px';
+                        planBadge.style.fontWeight = '600';
+                        planBadge.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.15)';
+                        header.appendChild(planBadge);
+                        
+                        container.appendChild(header);
+                        
+                        // Meal title
+                        const mealHeader = document.createElement('div');
+                        mealHeader.style.textAlign = 'center';
+                        mealHeader.style.marginBottom = '20px';
+                        
+                        const mealTitle = document.createElement('div');
+                        mealTitle.textContent = mealName.toUpperCase();
+                        mealTitle.style.display = 'inline-block';
+                        mealTitle.style.padding = '10px 20px';
+                        mealTitle.style.fontSize = '22px';
+                        mealTitle.style.fontWeight = 'bold';
+                        mealTitle.style.letterSpacing = '1px';
+                        mealTitle.style.borderRadius = '10px';
+                        
+                        if (mealType === 'breakfast') {
+                            mealTitle.style.background = 'linear-gradient(135deg, #ff7e5f, #feb47b)';
+                        } else if (mealType === 'lunch') {
+                            mealTitle.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                        } else {
+                            mealTitle.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+                        }
+                        mealTitle.style.color = 'white';
+                        mealTitle.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+                        
+                        mealHeader.appendChild(mealTitle);
+                        container.appendChild(mealHeader);
+                        
+                        // Days grid
+                        const daysGrid = document.createElement('div');
+                        daysGrid.style.display = 'grid';
+                        daysGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                        daysGrid.style.gap = '15px';
+                        
+                        for (let dayIndex = 0; dayIndex < 3; dayIndex++) {
+                            const dayNumber = fileIndex * 3 + dayIndex;
+                            if (dayNumber >= 15) break;
+                            
+                            const currentDate = new Date(startDate);
+                            currentDate.setDate(startDate.getDate() + dayNumber);
+                            const dateKey = formatDate(currentDate);
+                            const dayName = getDayName(currentDate);
+                            
+                            const dayCard = document.createElement('div');
+                            dayCard.style.padding = '15px';
+                            dayCard.style.backgroundColor = 'white';
+                            dayCard.style.borderRadius = '12px';
+                            dayCard.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+                            dayCard.style.border = '2px solid rgba(255, 255, 255, 0.8)';
+                            
+                            // Date header
+                            const dateHeader = document.createElement('div');
+                            dateHeader.style.textAlign = 'center';
+                            dateHeader.style.marginBottom = '10px';
+                            dateHeader.style.paddingBottom = '8px';
+                            dateHeader.style.borderBottom = '2px dashed #ddd';
+                            
+                            const dateElem = document.createElement('div');
+                            dateElem.textContent = dateKey;
+                            dateElem.style.fontWeight = 'bold';
+                            dateElem.style.fontSize = '14px';
+                            dateElem.style.color = '#2c3e50';
+                            dateHeader.appendChild(dateElem);
+                            
+                            const dayElem = document.createElement('div');
+                            dayElem.textContent = dayName;
+                            dayElem.style.color = '#7f8c8d';
+                            dayElem.style.fontSize = '12px';
+                            dayElem.style.marginTop = '3px';
+                            dateHeader.appendChild(dayElem);
+                            
+                            dayCard.appendChild(dateHeader);
+                            
+                            // Meal content
+                            const mealContent = document.createElement('div');
+                            mealContent.textContent = menuData[dateKey]?.[mealType] || '';
+                            mealContent.style.fontSize = '12px';
+                            mealContent.style.whiteSpace = 'pre-line';
+                            mealContent.style.lineHeight = '1.4';
+                            mealContent.style.padding = '10px';
+                            mealContent.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                            mealContent.style.borderRadius = '8px';
+                            mealContent.style.border = '1px dashed rgba(0, 0, 0, 0.1)';
+                            mealContent.style.minHeight = '150px';
+                            
+                            dayCard.appendChild(mealContent);
+                            daysGrid.appendChild(dayCard);
+                        }
+                        
+                        container.appendChild(daysGrid);
+                        document.body.appendChild(container);
+                        
+                        // Generate image
+                        await new Promise(resolve => {
+                            setTimeout(() => {
+                                html2canvas(container, {
+                                    scale: 2,
+                                    useCORS: true,
+                                    logging: false,
+                                    backgroundColor: '#f8fafc',
+                                    allowTaint: false
+                                }).then(function(canvas) {
+                                    const link = document.createElement('a');
+                                    link.download = `Classic-Tiffin-3Days-${mealName}-Set-${fileIndex + 1}.png`;
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.click();
+                                    
+                                    document.body.removeChild(container);
+                                    resolve();
+                                });
+                            }, 500);
+                        });
+                        
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
+                    
+                    showNotification(`5 files of 3 days ${mealName} sets downloaded successfully!`, 'success');
+                } catch (error) {
+                    console.error(`Error downloading 3 days ${mealName} sets:`, error);
+                    showNotification(`Error generating ${mealName} sets. Please try again.`, 'error');
+                }
+            }
+            
+            // ========== BUTTON EVENT LISTENERS ==========
+            
+            // 3 Days Sets
+            document.getElementById('download3DaysSetsBtn').addEventListener('click', download3DaysSets);
+            document.getElementById('download3DaysBreakfastBtn').addEventListener('click', () => download3DaysMealSets('breakfast', 'Breakfast'));
+            document.getElementById('download3DaysLunchBtn').addEventListener('click', () => download3DaysMealSets('lunch', 'Lunch'));
+            document.getElementById('download3DaysDinnerBtn').addEventListener('click', () => download3DaysMealSets('dinner', 'Dinner'));
+            
+            // 15 Days Complete Meals
+            document.getElementById('download15DaysBreakfastBtn').addEventListener('click', () => download15DaysMeal('breakfast', 'Breakfast'));
+            document.getElementById('download15DaysLunchBtn').addEventListener('click', () => download15DaysMeal('lunch', 'Lunch'));
+            document.getElementById('download15DaysDinnerBtn').addEventListener('click', () => download15DaysMeal('dinner', 'Dinner'));
+            
+            // Individual Meals
+            document.getElementById('downloadIndividualBreakfastBtn').addEventListener('click', () => downloadIndividualMeals('breakfast', 'Breakfast'));
+            document.getElementById('downloadIndividualLunchBtn').addEventListener('click', () => downloadIndividualMeals('lunch', 'Lunch'));
+            document.getElementById('downloadIndividualDinnerBtn').addEventListener('click', () => downloadIndividualMeals('dinner', 'Dinner'));
+            
+            // Complete Menu Download
+            document.getElementById('downloadCompleteMenuBtn').addEventListener('click', function() {
+                showNotification('Preparing complete 15 days menu...', 'info');
+                
+                const menuCard = document.getElementById('menuCard');
+                const originalSubtitle = document.querySelector('.menu-subtitle').textContent;
+                document.querySelector('.menu-subtitle').textContent = '15-Day Premium Tiffin Service Menu';
+                
+                setTimeout(() => {
+                    html2canvas(menuCard, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#f8fafc',
+                        allowTaint: false
+                    }).then(function(canvas) {
+                        const link = document.createElement('a');
+                        link.download = 'Classic-Tiffin-Complete-15Days-Menu.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        
+                        document.querySelector('.menu-subtitle').textContent = originalSubtitle;
+                        showNotification('Complete menu downloaded successfully!', 'success');
+                    }).catch(error => {
+                        console.error('Error generating menu:', error);
+                        document.querySelector('.menu-subtitle').textContent = originalSubtitle;
+                        showNotification('Error generating menu. Please try again.', 'error');
+                    });
+                }, 1000);
+            });
+            
+            // Excel Download
+            document.getElementById('excelBtn').addEventListener('click', function() {
+                showNotification('Preparing Excel file for download...', 'info');
+                
+                const companyName = document.getElementById('companyName').value || 'Classic Tiffin Service by Navovia Next';
+                const planName = document.getElementById('planName').value || 'Premium Plan';
+                const startDate = new Date(document.getElementById('startDate').value);
+                
+                const wb = XLSX.utils.book_new();
+                const excelData = [];
+                
+                excelData.push(['Date', 'Day', 'Breakfast', 'Lunch', 'Light Lunch', 'Dinner']);
+                
+                for (let i = 0; i < 15; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    
+                    const dateKey = formatDate(currentDate);
+                    const dayName = getDayName(currentDate);
+                    
+                    const dayMenu = menuData[dateKey] || {
+                        breakfast: '',
+                        lunch: '',
+                        lightLunch: '',
+                        dinner: ''
+                    };
+                    
+                    excelData.push([
+                        dateKey,
+                        dayName,
+                        dayMenu.breakfast.replace(/\n/g, '\n'),
+                        dayMenu.lunch.replace(/\n/g, '\n'),
+                        dayMenu.lightLunch.replace(/\n/g, '\n'),
+                        dayMenu.dinner.replace(/\n/g, '\n')
+                    ]);
+                }
+                
+                const ws = XLSX.utils.aoa_to_sheet(excelData);
+                XLSX.utils.book_append_sheet(wb, ws, 'Menu');
+                XLSX.writeFile(wb, `Classic-Tiffin-Menu-${new Date().toISOString().split('T')[0]}.xlsx`);
+                
+                showNotification('Excel file downloaded successfully!', 'success');
+            });
+            
+            // Data Management Functions
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const importDataBtn = document.getElementById('importDataBtn');
+            const createBackupBtn = document.getElementById('createBackupBtn');
+            const restoreBackupBtn = document.getElementById('restoreBackupBtn');
+            const importModal = document.getElementById('importModal');
+            const closeImportModal = document.getElementById('closeImportModal');
+            const cancelImport = document.getElementById('cancelImport');
+            const confirmImport = document.getElementById('confirmImport');
+            const importFile = document.getElementById('importFile');
+            const importText = document.getElementById('importText');
+            
+            // Export Data
+            exportDataBtn.addEventListener('click', function() {
+                try {
+                    const exportData = {
+                        menuData: menuData,
+                        formData: getFormData(),
+                        exportDate: new Date().toISOString()
+                    };
+                    
+                    const dataStr = JSON.stringify(exportData, null, 2);
+                    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                    
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(dataBlob);
+                    link.download = `classic-tiffin-backup-${new Date().toISOString().split('T')[0]}.json`;
+                    link.click();
+                    
+                    showNotification('Data exported successfully!', 'success');
+                } catch (e) {
+                    console.error('Error exporting data:', e);
+                    showNotification('Error exporting data', 'error');
+                }
+            });
+            
+            // Import Data
+            importDataBtn.addEventListener('click', function() {
+                importModal.style.display = 'flex';
+            });
+            
+            closeImportModal.addEventListener('click', function() {
+                importModal.style.display = 'none';
+            });
+            
+            cancelImport.addEventListener('click', function() {
+                importModal.style.display = 'none';
+            });
+            
+            // File import
+            importFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        importText.value = event.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            
+            confirmImport.addEventListener('click', function() {
+                const importData = importText.value.trim();
+                if (!importData) {
+                    showNotification('Please provide data to import', 'error');
+                    return;
+                }
+                
+                if (confirm('Import data? This will replace current data.')) {
+                    try {
+                        const imported = JSON.parse(importData);
+                        
+                        if (imported.menuData) {
+                            menuData = imported.menuData;
+                            dataManager.saveMenuData(menuData);
+                        }
+                        
+                        if (imported.formData) {
+                            // Update form fields
+                            document.getElementById('companyName').value = imported.formData.companyName || 'Classic Tiffin Service by Navovia Next';
+                            document.getElementById('planName').value = imported.formData.planName || 'Premium Plan';
+                            document.getElementById('startDate').value = imported.formData.startDate || '2025-02-02';
+                            document.getElementById('breakfastTemplate').value = imported.formData.breakfastTemplate || 'Choose your beverages-\nTea\nCoffee\nMilk';
+                            document.getElementById('lunchTemplate').value = imported.formData.lunchTemplate || 'Roti\nRice\nSabzi\nDal\nSalad\nSweet';
+                            document.getElementById('lightLunchTemplate').value = imported.formData.lightLunchTemplate || 'Roti\nSabzi\nSalad\nSweet';
+                            document.getElementById('dinnerTemplate').value = imported.formData.dinnerTemplate || 'Roti\nRice\nSabzi\nDal\nSalad\nSweet';
+                            
+                            if (imported.formData.logoDataURL) {
+                                logoDataURL = imported.formData.logoDataURL;
+                                document.getElementById('menuLogo').src = logoDataURL;
+                            }
+                            
+                            dataManager.saveFormData(imported.formData);
+                        }
+                        
+                        loadSavedData();
+                        generateMenu();
+                        importModal.style.display = 'none';
+                        showNotification('Data imported successfully!', 'success');
+                    } catch (e) {
+                        console.error('Error importing data:', e);
+                        showNotification('Error importing data. Invalid format.', 'error');
+                    }
+                }
+            });
+            
+            // Reset functionality
+            const resetBtn = document.getElementById('resetBtn');
+            
+            resetBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
+                    document.getElementById('companyName').value = 'Classic Tiffin Service by Navovia Next';
+                    document.getElementById('logoUpload').value = '';
+                    document.getElementById('planName').value = 'Premium Plan';
+                    document.getElementById('startDate').value = '2025-02-02';
+                    document.getElementById('breakfastTemplate').value = 'Choose your beverages-\nTea\nCoffee\nMilk';
+                    document.getElementById('lunchTemplate').value = 'Roti\nRice\nSabzi\nDal\nSalad\nSweet';
+                    document.getElementById('lightLunchTemplate').value = 'Roti\nSabzi\nSalad\nSweet';
+                    document.getElementById('dinnerTemplate').value = 'Roti\nRice\nSabzi\nDal\nSalad\nSweet';
+                    
+                    menuLogo.src = '';
+                    daysContainer.innerHTML = '';
+                    menuData = {};
+                    logoDataURL = '';
+                    
+                    localStorage.removeItem('classicTiffinMenuData');
+                    localStorage.removeItem('classicTiffinFormData');
+                    
+                    document.getElementById('menuCompanyName').textContent = 'Classic Tiffin Service by Navovia Next';
+                    document.getElementById('menuPlanName').textContent = 'Premium Plan';
+                    
+                    showNotification('All data has been reset!', 'info');
+                }
+            });
+            
+            // Auto-save form data when inputs change
+            const formInputs = document.querySelectorAll('input, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', autoSave);
+                input.addEventListener('change', autoSave);
+            });
+            
+            // Load saved data and generate initial menu
+            loadSavedData();
+            generateMenu();
+        });
+    </script>
+</body>
+</html>
